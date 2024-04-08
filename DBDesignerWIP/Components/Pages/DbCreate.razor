@@ -1,0 +1,52 @@
+﻿@page "/createdb"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+<h1>Create new database</h1>
+
+Name: <InputText @bind-Value="name"/> <br />
+Charset: 
+<select @bind="charset">
+    @foreach (string s in Choices.charsets)
+    {
+        <option>@s</option>
+    }
+</select> <br />
+
+Collate:
+<select @bind="collate">
+    @foreach (string s in Choices.collates)
+    {
+        <option>@s</option>
+    }
+</select>
+<br />
+
+<button @onclick="CreateDatabase">Create database</button>
+
+
+
+@code {
+    public string name { get; set; } = "";
+    public string charset { get; set; } = Choices.charsets[0];
+    public string collate { get; set; } = Choices.collates[0];
+
+    public void CreateDatabase()
+    {
+        string errorMessage = "";
+        if (Methods.CreateDatabase(name, charset, collate, out errorMessage))
+        {
+            JS.InvokeVoidAsync("alert", "Database " + name + " created successfully.");
+
+            name = "";
+            charset = Choices.charsets[0];
+            collate = Choices.collates[0];
+
+            StateHasChanged();
+        }
+        else
+        {
+            JS.InvokeVoidAsync("alert", errorMessage);
+        }
+
+    }
+}

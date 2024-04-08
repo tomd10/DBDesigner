@@ -1,0 +1,66 @@
+﻿@page "/alterdb/{dbIndex}"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager nav
+<link rel="stylesheet" href="styles.css" />
+<h1>Alter database</h1>
+@if(loaded && db != null)
+{
+    @("Name:")
+        <InputText @bind-Value="name" />
+    <br />
+    @("Charset:")
+        <select @bind="charset">
+            @foreach (string s in Choices.charsets)
+            {
+                <option>@s</option>
+            }
+        </select>
+    <br />
+
+    @("Collate")
+        <select @bind="collate">
+            @foreach (string s in Choices.collates)
+            {
+                <option>@s</option>
+            }
+        </select>
+        <br />
+    <button @onclick="AlterDatabase">Alter database</button>
+}
+else @("Incorrect parameter.")
+
+@code {
+    [Parameter]
+    public string dbIndex { get; set; }
+
+    private bool loaded = false;
+    private Database db = null;
+
+    public string name { get; set; }
+    public string charset { get; set; }
+    public string collate { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        int index = -1;
+        int.TryParse(dbIndex, out index);
+        if (index < 0) return;
+        else
+        {
+            db = Methods.GetNthDatabase(index);
+            loaded = true;
+
+            name = db.name;
+            charset = db.charset;
+            collate = db.collate.Substring(db.charset.Length, db.collate.Length - db.charset.Length);
+        }
+
+        StateHasChanged();
+
+    }
+    public void AlterDatabase()
+    {
+        
+    }
+}

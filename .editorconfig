@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS8603: Může jít o vrácený odkaz null.
+dotnet_diagnostic.CS8603.severity = none

@@ -1,0 +1,70 @@
+﻿@page "/tables"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager nav
+<link rel="stylesheet" href="styles.css" />
+<h1>Databases</h1>
+@if(DataStore.activeDatabase == null)
+{
+    @("No database selected!")
+}
+else
+{
+    <button @onclick="@(()=>nav.NavigateTo("/createtable"))">Create table</button>
+    @("List of tables:")
+    <table>
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Is temporary?</td>
+                <td>Engine</td>
+                <td>Auto increment</td>
+                <td>Charset</td>
+                <td>Collate</td>
+                <td>Columns</td>
+                <td>Edit</td>
+                <td>Drop</td>
+                <td>Comment</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                counter = 0;
+            }
+            @foreach (Table t in DataStore.activeDatabase.tables)
+            {
+                int counter2 = counter;
+                <tr>
+                    <td>@t.name</td>
+                    <td>@(t.isTemporary ? "Y" : "N")</td>
+                    <td>@t.engine</td>
+                    <td>@t.auto_increment</td>
+                    <td>@t.charset</td>
+                    <td>@t.collate</td>
+                    <td>@t.columns.Count</td>
+                    <td @onclick="@(() => Edit(counter2))">Edit</td>
+                    <td @onclick="@(() => Drop(counter2))">Drop</td>
+                    <td>@t.comment</td>
+                </tr>
+                counter = counter + 1;
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+    int counter = 0;
+
+    public void Edit(int row)
+    {
+        
+    }
+
+    public void Drop(int row)
+    {
+
+    } 
+    }
+

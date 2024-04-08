@@ -1,0 +1,26 @@
+﻿@page "/dbconnect"
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+<h1>Database connection</h1>
+
+Hostname: <InputText @bind-Value="hostname"/> <br />
+Username: <InputText @bind-Value="username"/> <br />
+Password: <InputText @bind-Value="password"/><br/>
+<button @onclick="Login">Login</button>
+
+@code {
+    public string hostname { get; set; }
+    public string username { get; set; }
+    public string password { get; set; }
+
+    public void Login()
+    {
+        SqlDb db = SqlDb.CreateConnection(hostname, username, password);
+
+        if (db == null)
+        {
+            JS.InvokeVoidAsync("alert", "Database connection failed.");
+        }
+        else DataStore.dbConnection = db;
+    }
+}

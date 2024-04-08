@@ -1,0 +1,13 @@
+﻿@page "/batch"
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+<h1>Batch</h1>
+
+@foreach (string s in DataStore.batch)
+{
+    <div>@s</div>
+}
+
+@code {
+    
+}
