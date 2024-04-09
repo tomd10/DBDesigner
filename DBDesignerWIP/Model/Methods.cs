@@ -51,6 +51,25 @@ namespace DBDesignerWIP
             }
         }
 
+        public static bool CreateTable(string name, bool isTemporary, string engine, string charset, string collate, int auto_increment, string comment, out string errorMessage)
+        {
+            if (!Check.CheckTableName(name, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                Table t = new Table(name, isTemporary, engine, charset, collate, auto_increment.ToString(), comment, DataStore.activeDatabase);
+                t.CreateDefaultColumn();
+                DataStore.activeDatabase.tables.Add(t);
+
+                DataStore.batch.Add(t.GetStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
         public static void DropDatabase (int n, out string name)
         {
             Database db = GetNthDatabase(n);
@@ -61,6 +80,30 @@ namespace DBDesignerWIP
             if (DataStore.activeDatabase == db) DataStore.activeDatabase = null;
 
             DataStore.databases.Remove(db);
+        }
+
+        public static bool DropTable(int n, out string name, out string errorMessage)
+        {
+            Table t = DataStore.activeDatabase.GetNthTable(n);
+            List<ConstraintFK> constraints = DataStore.activeDatabase.GetTableFKReference(t);
+            name = t.name;
+            if (constraints.Count == 0)
+            {
+                errorMessage = "";
+                DataStore.batch.Add(t.GetDropStatement());
+                DataStore.activeDatabase.tables.Remove(t);
+                return true;
+            }
+            else
+            {
+                errorMessage = "Can't drop table " + t.name + ". It's referenced by:\n";
+                foreach (ConstraintFK constraintFK in constraints)
+                {
+                    errorMessage = errorMessage + constraintFK.name + " of table " + constraintFK.parent.name + "\n";
+                }
+                return false;
+            }
+
         }
     }
 }

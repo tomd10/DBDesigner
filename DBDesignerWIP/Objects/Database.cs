@@ -55,6 +55,15 @@ namespace DBDesignerWIP
             return null;
         }
 
+        public Table GetNthTable(int index)
+        {
+            if (index < tables.Count)
+            {
+                return tables[index];
+            }
+            else return null;
+        }
+
         public bool GetTableNameAvailable(string s)
         {
             foreach (Table t in tables)
@@ -107,6 +116,36 @@ namespace DBDesignerWIP
             }
 
             return list;
-        } 
+        }
+        
+        public string GetAlterName(string newName)
+        {
+            if (name != newName)
+            {
+                throw new NotImplementedException();
+            }
+            else return "";
+
+        }
+
+        public string GetAlterCharset(string charset)
+        {
+            if (this.charset != charset)
+            {
+                this.charset = charset;
+                return "ALTER DATABASE `" + this.name + "` CHARACTER SET '" + charset + "';";
+            }
+            else return null;
+        }
+
+        public string GetAlterCollate(string collate)
+        {
+            if (this.collate != collate)
+            {
+                this.collate = collate;
+                return "ALTER DATABASE `" + this.name + "` COLLATE '" + collate + "';";
+            }
+            else return null;
+        }
     }
 }

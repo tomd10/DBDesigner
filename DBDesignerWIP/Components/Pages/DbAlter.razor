@@ -6,26 +6,38 @@
 <h1>Alter database</h1>
 @if(loaded && db != null)
 {
-    @("Name:")
-        <InputText @bind-Value="name" />
-    <br />
-    @("Charset:")
-        <select @bind="charset">
-            @foreach (string s in Choices.charsets)
-            {
-                <option>@s</option>
-            }
-        </select>
-    <br />
+    <div class="formElementWrapper">
+        <div class="formLabel">    @("Name:")</div>
+        <div class="formElement">
+            <InputText @bind-Value="name" hidden="true" />
+        </div>
+    </div>
 
-    @("Collate")
-        <select @bind="collate">
-            @foreach (string s in Choices.collates)
-            {
-                <option>@s</option>
-            }
-        </select>
-        <br />
+        
+    <br />
+    <div class="formElementWrapper">
+        <div class="formLabel">@("Charset:")</div>
+        <div class="formElement">
+            <select @bind="charset">
+                @foreach (string s in Choices.charsets)
+                {
+                    <option>@s</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="formElementWrapper">
+        <div class="formLabel">@("Collate:")</div>
+        <div class="formElement">
+            <select @bind="collate">
+                @foreach (string s in Choices.collates)
+                {
+                    <option>@s</option>
+                }
+            </select>
+        </div>
+    </div>
     <button @onclick="AlterDatabase">Alter database</button>
 }
 else @("Incorrect parameter.")
@@ -61,6 +73,11 @@ else @("Incorrect parameter.")
     }
     public void AlterDatabase()
     {
-        
+        string statement1 = db.GetAlterCharset(charset);
+        string statement2 = db.GetAlterCollate(charset+collate);
+
+        if (statement1 != null) DataStore.batch.Add(statement1);
+        if (statement2 != null) DataStore.batch.Add(statement2);
+        nav.NavigateTo("/databases");
     }
 }

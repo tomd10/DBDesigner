@@ -1,25 +1,33 @@
 ﻿@page "/createdb"
 @rendermode InteractiveServer
 @inject IJSRuntime JS
+@inject NavigationManager nav
 <h1>Create new database</h1>
 
 Name: <InputText @bind-Value="name"/> <br />
-Charset: 
-<select @bind="charset">
-    @foreach (string s in Choices.charsets)
-    {
-        <option>@s</option>
-    }
-</select> <br />
+<div class="formElementWrapper">
+    <div class="formLabel">@("Charset:")</div>
+    <div class="formElement">
+        <select @bind="charset">
+            @foreach (string s in Choices.charsets)
+            {
+                <option>@s</option>
+            }
+        </select>
+    </div>
+</div>
 
-Collate:
-<select @bind="collate">
-    @foreach (string s in Choices.collates)
-    {
-        <option>@s</option>
-    }
-</select>
-<br />
+<div class="formElementWrapper">
+    <div class="formLabel">@("Collate:")</div>
+    <div class="formElement">
+        <select @bind="collate">
+            @foreach (string s in Choices.collates)
+            {
+                <option>@s</option>
+            }
+        </select>
+    </div>
+</div>
 
 <button @onclick="CreateDatabase">Create database</button>
 
@@ -40,8 +48,9 @@ Collate:
             name = "";
             charset = Choices.charsets[0];
             collate = Choices.collates[0];
-
+            
             StateHasChanged();
+            nav.NavigateTo("/databases");
         }
         else
         {

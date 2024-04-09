@@ -248,11 +248,31 @@ namespace DBDesignerWIP
             }
         }
 
+        public static bool CheckTableName(string name, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage)) return false;
+            else
+            {
+                foreach (Table t in DataStore.activeDatabase.tables)
+                {
+                    if (t.name == name)
+                    {
+                        errorMessage = "Duplicate table name.";
+                        return false;
+                    }
+                }
+                errorMessage = "";
+                return true;
+            }
+        }
+
         public static bool CheckTextColumn()
         {
             
             return false;
         }
+
+
 
     }
 }

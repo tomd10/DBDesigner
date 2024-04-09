@@ -18,6 +18,7 @@ namespace DBDesignerWIP
         public static readonly List<string> decimalColumn = new List<string>() { "FLOAT", "DOUBLE", "DECIMAL" };
         public static readonly List<string> datetimeColumn = new List<string>() { "DATETIME", "DATE", "TIME", "TIMESTAMP", "YEAR" };
         public static readonly List<string> onUpdateDelete = new List<string>() { "", "RESTRICT", "CASCADE", "SET NULL", "NO ACTION", "SET DEFAULT" };
+        public static readonly List<string> engines = new List<string>() { "InnoDB", "Aria", "MEMORY" };
 
         public static List<string> dbNames = new List<string>();
         public static List<string> tableNames = new List<string>();
@@ -38,6 +39,21 @@ namespace DBDesignerWIP
             {
                 tableNames.Add(t.name);
             }
+        }
+
+        public enum ColumnTypes
+        {
+            Text, Integer, Decimal, Enum, Binary, DateTime
+        }
+
+        public static List<string> GetTypeNames(ColumnTypes ct)
+        {
+            if (ct == ColumnTypes.Text) return textColumn;
+            if (ct == ColumnTypes.Binary) return binaryColumn;
+            if (ct == ColumnTypes.Integer) return integerColumn;
+            if (ct == ColumnTypes.Decimal) return decimalColumn;
+            if (ct == ColumnTypes.Enum) return enumColumn;
+            else return datetimeColumn;
         }
     }
 }

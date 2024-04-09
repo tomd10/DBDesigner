@@ -1,0 +1,85 @@
+﻿@page "/createcolumn"
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject NavigationManager nav
+<h1>Create new table</h1>
+<InputRadioGroup @bind-Value="ct" id="typeDropdown">
+    @foreach(var type in Enum.GetValues<Choices.ColumnTypes>())
+    {
+        <div>
+            <label>
+                <InputRadio Value="type"></InputRadio>
+                @type
+            </label>
+        </div>
+    }
+</InputRadioGroup>
+
+<div class="formElementWrapper">
+    <div class="formLabel">@("Name: ")</div>
+    <div class="formElement"><InputText @bind-Value="name" /></div>
+</div>
+
+<div class="formElementWrapper">
+    <div class="formLabel">@("Type: ")</div>
+    <div class="formElement">
+        <select @bind="type" id="cs">
+            @if (!Choices.GetTypeNames(ct).Contains(type))
+            {
+                type = Choices.GetTypeNames(ct)[0];
+            }
+            @foreach (string s in Choices.GetTypeNames(ct))
+            {
+                <option value="@s">@s</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="formElementWrapper">
+    <div class="formLabel">@("Null allowed?")</div>
+    <div class="formElement"><InputCheckbox @bind-Value="nullAllowed" /></div>
+</div>
+
+
+
+
+
+
+<button @onclick="CreateTable">Create</button>
+
+
+@code {
+    public Choices.ColumnTypes ct { get; set; }
+
+    public string name { get; set; } 
+    public string type { get; set; }
+    public bool nullAllowed { get; set; } = false;
+    public string comment { get; set; } = "";
+
+    public string charset { get; set; } = Choices.charsets[0];
+    public string collate { get; set; } = Choices.collates[0];
+
+    public bool autoIncrement { get; set; } = false;
+    
+
+    public void CreateTable()
+    {
+        Console.WriteLine(ct.ToString());
+        Console.WriteLine(name);
+        Console.WriteLine(type);
+        Console.WriteLine(nullAllowed.ToString());
+        Console.WriteLine(charset);
+        Console.WriteLine(collate);
+
+        Console.WriteLine("-----");
+
+    }
+
+    public async void UpdateDropdown(ProgressEventArgs e)
+    {
+        Console.WriteLine("cs");
+    }
+
+
+}

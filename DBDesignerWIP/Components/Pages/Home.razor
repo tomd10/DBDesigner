@@ -1,9 +1,11 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@inject NavigationManager nav
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 <button @onclick="start">Click</button>
+<button @onclick="cr">cr</button>
 Welcome to your new app.
 
 @code
@@ -43,11 +45,16 @@ Welcome to your new app.
                 Console.WriteLine("----------");
                 Console.WriteLine(t.GetStatement());
                 Console.WriteLine("----------");
-                */
+            */
             }
 
         }
 
         database.Close();
+    }
+
+    public void cr()
+    {
+        nav.NavigateTo("/createtable");
     }
 }

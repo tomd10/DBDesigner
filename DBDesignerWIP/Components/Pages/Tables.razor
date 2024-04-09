@@ -60,12 +60,20 @@ else
 
     public void Edit(int row)
     {
-        
+
     }
 
     public void Drop(int row)
     {
+        string name, errorMessage;
+        if (Methods.DropTable(row, out name, out errorMessage))
+        {
 
+        }
+        else
+        {
+            JS.InvokeVoidAsync("alert", errorMessage);
+        }
     } 
     }
 
