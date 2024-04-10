@@ -82,7 +82,17 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.name + "` DROP PRIMARY KEY";
+            return "ALTER TABLE `" + parent.name + "` DROP PRIMARY KEY;";
+        }
+
+        public string GetLocalColumns()
+        {
+            string result = "";
+            foreach (Column c in localColumns)
+            {
+                result = result + c.name + ", ";
+            }
+            return result.Substring(0, result.Length - 2);
         }
     }
 
@@ -146,6 +156,31 @@ namespace DBDesignerWIP
         {
             return "ALTER TABLE `" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
         }
+
+        public string GetLocalColumns()
+        {
+            string result = "";
+            foreach (Column c in localColumns)
+            {
+                result = result + c.name + ", ";
+            }
+            return result.Substring(0, result.Length - 2);
+        }
+
+        public string GetRemoteColumns()
+        {
+            string result = "";
+            foreach (Column c in remoteColumns)
+            {
+                result = result + c.name + ", ";
+            }
+            return result.Substring(0, result.Length - 2);
+        }
+
+        public string GetRemoteTable()
+        {
+            return remoteTable.name;
+        }
     }
 
     public class ConstraintUQ : Constraint
@@ -184,6 +219,16 @@ namespace DBDesignerWIP
         public override string GetDropStatement()
         {
             return "ALTER TABLE `" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+        }
+
+        public string GetLocalColumns()
+        {
+            string result = "";
+            foreach (Column c in localColumns)
+            {
+                result = result + c.name + ", ";
+            }
+            return result.Substring(0, result.Length - 2);
         }
     }
 
@@ -225,6 +270,15 @@ namespace DBDesignerWIP
         public override string GetDropStatement()
         {
             return "ALTER TABLE `" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+        }
+        public string GetLocalColumns()
+        {
+            string result = "";
+            foreach (Column c in localColumns)
+            {
+                result = result + c.name + ", ";
+            }
+            return result.Substring(0, result.Length - 2);
         }
     }
 

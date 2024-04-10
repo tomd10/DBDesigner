@@ -226,6 +226,13 @@
 
             return result;
         }
+
+        public string GetOptions()
+        {
+            string result = "";
+            foreach (string field in options) { result = result + "'" + field + "',"; }
+            return result.Substring(0, result.Length - 1);
+        }
     }
 
     public class IntegerColumn : Column

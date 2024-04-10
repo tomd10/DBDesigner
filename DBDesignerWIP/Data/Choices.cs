@@ -55,5 +55,19 @@ namespace DBDesignerWIP
             if (ct == ColumnTypes.Enum) return enumColumn;
             else return datetimeColumn;
         }
+
+        public static List<string> GetTableNames()
+        {
+            List<string> names = new List<string>();
+            if (DataStore.activeDatabase != null)
+            {
+                foreach (Table t in DataStore.activeDatabase.tables)
+                {
+                    names.Add(t.name);
+                }
+            }
+
+            return names;
+        }
     }
 }
