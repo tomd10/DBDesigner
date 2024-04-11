@@ -106,6 +106,11 @@
             return list;
         }
 
+        public string GetAddColumnStatement()
+        {
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD COLUMN " + GetStatement() + ";";
+        }
+
     }
 
     public class TextColumn : Column
@@ -451,5 +456,7 @@
 
             return result;
         }
+
+
     }
 }

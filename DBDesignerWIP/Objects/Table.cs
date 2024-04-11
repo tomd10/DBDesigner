@@ -1,5 +1,7 @@
 ﻿
 
+using DBDesignerWIP.Components.Pages;
+
 namespace DBDesignerWIP
 {
     public class Table
@@ -72,7 +74,7 @@ namespace DBDesignerWIP
         {
             string result = "CREATE";
             if (isTemporary) result = result + " TEMPORARY";
-            result = result + " TABLE IF NOT EXISTS `" + name + "` (\n";
+            result = result + " TABLE IF NOT EXISTS `" + parent.name + "`.`" + name + "` (\n";
             foreach (Column c in columns)
             {
                 result = result + c.GetStatement() + ",\n";
@@ -89,7 +91,7 @@ namespace DBDesignerWIP
 
         public string GetDropStatement()
         {
-            return "DROP TABLE IF EXISTS `" + name + "`;";
+            return "DROP TABLE IF EXISTS `"+ parent.name + "`.`"+name+"`;";
         }
 
         public bool GetColumnNameAvailable(string s)

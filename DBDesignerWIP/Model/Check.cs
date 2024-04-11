@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -11,10 +12,15 @@ namespace DBDesignerWIP
     {
         public static bool CheckDefaultString(string value, string type, int size, bool nullAllowed, out string errorMessage)
         {
-            if (value == null && nullAllowed == false)
+            if ((value == null || value.ToUpper() == "#NULL") && nullAllowed == false)
             {
                 errorMessage = "Column doesn't support NULL values.";
                 return false;
+            }
+            if (value == null && nullAllowed)
+            {
+                errorMessage = "";
+                return true;
             }
             if ((type == "VARCHAR" || type == "CHAR") && value.Length > size)
             {
@@ -31,22 +37,17 @@ namespace DBDesignerWIP
             return true;
         }
 
-        public static bool CheckDefaultInteger(string value, string type, bool nullAllowed, bool unsigned, bool zerofill, bool unique, bool autoincrement, out string errorMessage)
+        public static bool CheckDefaultInteger(string value, string type, bool nullAllowed, bool unsigned, bool zerofill, bool autoincrement, out string errorMessage)
         {
-            if (autoincrement && !unique)
-            {
-                errorMessage = "Auto-incremented columns must have UNIQUE values.";
-                return false;
-            }
             if (value == null && !nullAllowed)
             {
                 errorMessage = "Column doesn't support NULL values.";
                 return false;
             }
-            if (zerofill && !unsigned)
+            if (value == null && nullAllowed)
             {
-                errorMessage = "Zero-filled columns must be UNSIGNED.";
-                return false;
+                errorMessage = "";
+                return true;
             }
             long val = 0;
             if (value != null && !long.TryParse(value, out val))
@@ -118,6 +119,11 @@ namespace DBDesignerWIP
                 errorMessage = "Column doesn't support NULL values.";
                 return false;
             }
+            if (value == null && nullAllowed)
+            {
+                errorMessage = "";
+                return true;
+            }
             double val;
             if (value != null && !double.TryParse(value, out val))
             {
@@ -135,6 +141,11 @@ namespace DBDesignerWIP
                 errorMessage = "Column doesn't support NULL values.";
                 return false;
             }
+            if (value == null && nullAllowed)
+            {
+                errorMessage = "";
+                return true;
+            }
             if (!options.Contains(value))
             {
                 errorMessage = "Default value not in ENUM/SET options.";
@@ -145,12 +156,17 @@ namespace DBDesignerWIP
             return true;
         }
 
-        public static bool CheckBinary(string value, string type, bool nullAllowed, out string errorMessage)
+        public static bool CheckBinary(string value, string type, bool nullAllowed, int size, out string errorMessage)
         {
             if (type.Contains("BLOB"))
             {
                 errorMessage = "BLOB columns cannot have default value.";
                 return false;
+            }
+            if (value == null && nullAllowed)
+            {
+                errorMessage = "";
+                return true;
             }
             if (value == null && !nullAllowed)
             {
@@ -168,7 +184,11 @@ namespace DBDesignerWIP
                 errorMessage = "Column doesn't support NULL values.";
                 return false;
             }
-
+            if (value == null && nullAllowed)
+            {
+                errorMessage = "";
+                return true;
+            }
             if (type == "DATETIME" || type == "TIMESTAMP")
             {
                 string format = "yyyy-MM-dd HH:mm:ss";
@@ -215,6 +235,11 @@ namespace DBDesignerWIP
             if (name.Length > 64)
             {
                 errorMessage = "Name maximum length is 64 characters";
+                return false;
+            }
+            if (name == null ||  name.Length == 0)
+            {
+                errorMessage = "Name mustn't be empty.";
                 return false;
             }
             for (int i = 0; i < name.Length; i++)
@@ -266,13 +291,186 @@ namespace DBDesignerWIP
             }
         }
 
-        public static bool CheckTextColumn()
+        public static bool CheckTextColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, string charset, string collate, out string errorMessage)
         {
-            
-            return false;
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            if(!DataStore.activeTable.GetColumnNameAvailable(name))
+            {
+                errorMessage = "Duplicate column name.";
+                return false;
+            }
+            if (size < 1 || size > 255)
+            {
+                errorMessage = "Size must be within (1, 255) inclusive.";
+                return false;
+            }
+            string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+            if (defa != "")
+            {
+                if(!Check.CheckDefaultString(defa, type, size, nullAllowed, out errorMessage))
+                {
+                    return false;
+                }
+            }
+
+            errorMessage = "";
+            return true;
         }
 
+        public static bool CheckIntegerColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, bool unsigned, bool zerofill, bool autoIncrement, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            if (!DataStore.activeTable.GetColumnNameAvailable(name))
+            {
+                errorMessage = "Duplicate column name.";
+                return false;
+            }
+            if(zerofill && !unsigned)
+            {
+                errorMessage = "ZEROFILLed column must be UNSIGNED.";
+                return false;
+            }
+            if (DataStore.activeTable.GetAutoIncrement() && autoIncrement)
+            {
+                errorMessage = "There can be only one auto-incremented columns.";
+                return false;
+            }
+            if (size < 1 || size > 255)
+            {
+                errorMessage = "Size must be within (1, 255) inclusive.";
+                return false;
+            }
+            string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+            if (defa != "")
+            {
+                if (!CheckDefaultInteger(defa, type, nullAllowed, unsigned, zerofill, autoIncrement, out errorMessage))
+                {
+                    return false;
+                }
+            }
 
+            return true;
 
+        }
+
+        public static bool CheckDecimalColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, int d, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            if (!DataStore.activeTable.GetColumnNameAvailable(name))
+            {
+                errorMessage = "Duplicate column name.";
+                return false;
+            }
+            if (d > size)
+            {
+                errorMessage = "d must be smaller than size.";
+                return false;
+            }
+            string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+            if (defa != "")
+            {
+                if (!CheckDecimal(defa, type, nullAllowed, out errorMessage))
+                {
+                    return false;
+                }
+            }
+            errorMessage = "";
+            return true;
+        }
+
+        public static bool CheckEnumColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, string options, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            if (!DataStore.activeTable.GetColumnNameAvailable(name))
+            {
+                errorMessage = "Duplicate column name.";
+                return false;
+            }
+            if (options.Trim() == "")
+            {
+                errorMessage = "Empty options";
+                return false;
+            }
+
+            List<string> opt = options.Trim().Split(",").ToList(); for (int i = 0; i < opt.Count; i++) { opt[i] = opt[i].Trim(); }
+            if (opt.Count != opt.Distinct().Count())
+            {
+                errorMessage = "Duplicate options";
+                return false;
+            }
+            string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+            if (defa != "")
+            {
+                if (!CheckEnum(defa, type, nullAllowed, opt, out errorMessage))
+                {
+                    return false;
+                }
+            }
+            errorMessage = "";
+            return true;
+        }
+
+        public static bool CheckBinaryColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            if (!DataStore.activeTable.GetColumnNameAvailable(name))
+            {
+                errorMessage = "Duplicate column name.";
+                return false;
+            }
+            if (size < 1 || size > 255)
+            {
+                errorMessage = "Size must be within (1, 255) inclusive.";
+                return false;
+            }
+            string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+            if (defa != "")
+            {
+                if (!CheckBinary(defa, type, nullAllowed, size, out errorMessage))
+                {
+                    return false;
+                }
+            }
+            errorMessage = "";
+            return true;
+        }
+
+        public static bool CheckDateTimeColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            if (!DataStore.activeTable.GetColumnNameAvailable(name))
+            {
+                errorMessage = "Duplicate column name.";
+                return false;
+            }
+            string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+            if (defa != "")
+            {
+                if (!CheckDateTime(defa, type, nullAllowed, out errorMessage))
+                {
+                    return false;
+                }
+            }
+            errorMessage = "";
+            return true;
+        }
     }
 }

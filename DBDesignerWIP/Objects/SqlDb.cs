@@ -53,16 +53,16 @@ namespace DBDesignerWIP
         {
             List<string> list = new List<string>();
 
-            SetDb(db);
-            cmd.CommandText = "SHOW TABLES;";
+            //SetDb(db);
+            cmd.CommandText = "SHOW TABLES FROM `" + db + "`;";
 
             return GetColumn(Read(), 0);
         }
 
         public string GetCreateTable(string database, string table)
         {
-            SetDb(database);
-            cmd.CommandText = "SHOW CREATE TABLE " + table + ";";
+            //SetDb(database);
+            cmd.CommandText = "SHOW CREATE TABLE `" + database + "`.`" + table + "`;";
 
 
             return ReadStr(1);
@@ -78,8 +78,8 @@ namespace DBDesignerWIP
 
         public List<List<string>> GetTable(string database, string table)
         {
-            SetDb(database);
-            cmd.CommandText = "SELECT * FROM " + table + ";";
+            //SetDb(database);
+            cmd.CommandText = "SELECT * FROM `" + database + "`.`" + table + "`;";
 
             return Read();
         }
@@ -115,6 +115,32 @@ namespace DBDesignerWIP
 
         private string ReadStr(int ord)
         {
+            //Error handling - SHOW CREATE DATABASE not supported
+            if (cmd.CommandText.StartsWith("SHOW CREATE DATABASE"))
+            {
+                try
+                {
+                    MySqlDataReader readerScd = cmd.ExecuteReader();
+                    string sScd = "";
+                    if (readerScd.HasRows)
+                    {
+                        while (readerScd.Read())
+                        {
+                            sScd = readerScd.GetString(ord);
+                        }
+
+
+                    }
+
+                    readerScd.Close();
+                    return sScd;
+                }
+                catch
+                {
+                    return "CREATE DATABASE `" + cmd.CommandText.Split(" ")[3] + "` CHARACTER SET uf8mb4 COLLATE utf8mb4_general_ci;";
+                }
+
+            }
 
             MySqlDataReader reader = cmd.ExecuteReader();
             string s = "";

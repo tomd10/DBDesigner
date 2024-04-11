@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
+using System.Drawing;
 
 namespace DBDesignerWIP
 {
@@ -103,7 +105,122 @@ namespace DBDesignerWIP
                 }
                 return false;
             }
-
         }
+
+        public static bool CreateTextColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, string charset, string collate, out string errorMessage)
+        {
+            if (!Check.CheckTextColumn(name, type, nullAllowed, defaultValue, comment, size, charset, collate, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                string? defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+                bool defaultValueSupported = !(defaultValue == "");
+                TextColumn tc = new TextColumn(name, nullAllowed, type, defaultValueSupported, defa, comment, DataStore.activeTable, size, charset, charset + collate);
+                DataStore.activeTable.columns.Add(tc);
+                DataStore.batch.Add(tc.GetAddColumnStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool CreateIntegerColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, bool unsigned, bool zerofill, bool autoIncrement, out string errorMessage)
+        {
+            if(!Check.CheckIntegerColumn(name, type, nullAllowed, defaultValue, comment, size, unsigned, zerofill, autoIncrement, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                string? defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+                bool defaultValueSupported = !(defaultValue == "");
+                IntegerColumn ic = new IntegerColumn(name, nullAllowed, type, defaultValueSupported, defa, comment, DataStore.activeTable, size, unsigned, zerofill, autoIncrement);
+                DataStore.activeTable.columns.Add(ic);
+                DataStore.batch.Add(ic.GetAddColumnStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool CreateDecimalColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, int d, out string errorMessage)
+        {
+            if (!Check.CheckDecimalColumn(name, type, nullAllowed, defaultValue, comment, size, d, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                string? defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+                bool defaultValueSupported = !(defaultValue == "");
+                DecimalColumn dc = new DecimalColumn(name, nullAllowed, type, defaultValueSupported, defa, comment, DataStore.activeTable, size, d);
+                DataStore.activeTable.columns.Add(dc);
+                DataStore.batch.Add(dc.GetAddColumnStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool CreateEnumColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, string options, out string errorMessage)
+        {
+            if(!Check.CheckEnumColumn(name, type, nullAllowed, defaultValue, comment, options, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                List<string> opt = options.Trim().Split(",").ToList(); for (int i = 0; i < opt.Count; i++) { opt[i] = opt[i].Trim(); }
+                string? defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+                bool defaultValueSupported = !(defaultValue == "");
+                EnumColumn ec = new EnumColumn(name, nullAllowed, type, defaultValueSupported, defa, comment, DataStore.activeTable, opt);
+                DataStore.activeTable.columns.Add(ec);
+                DataStore.batch.Add(ec.GetAddColumnStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool CreateBinaryColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, int size, out string errorMessage)
+        {
+            if (!Check.CheckBinaryColumn(name, type, nullAllowed, defaultValue, comment, size, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                string? defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+                bool defaultValueSupported = !(defaultValue == "");
+                BinaryColumn bc = new BinaryColumn(name, nullAllowed, type, defaultValueSupported, defa, comment, DataStore.activeTable, size);
+                DataStore.activeTable.columns.Add(bc);
+                DataStore.batch.Add(bc.GetAddColumnStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool CreateDateTimeColumn(string name, string type, bool nullAllowed, string defaultValue, string comment, out string errorMessage)
+        {
+            if (!Check.CheckDateTimeColumn(name, type, nullAllowed, defaultValue, comment, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                string? defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
+                bool defaultValueSupported = !(defaultValue == "");
+                DateTimeColumn dt = new DateTimeColumn(name, nullAllowed, type, defaultValueSupported, defa, comment, DataStore.activeTable, "");
+                DataStore.activeTable.columns.Add(dt);
+                DataStore.batch.Add(dt.GetAddColumnStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
     }
 }

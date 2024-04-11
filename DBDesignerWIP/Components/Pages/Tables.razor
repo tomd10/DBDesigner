@@ -1,4 +1,5 @@
 ﻿@page "/tables"
+
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager nav
@@ -75,5 +76,7 @@ else
             JS.InvokeVoidAsync("alert", errorMessage);
         }
     } 
+
+
     }
 

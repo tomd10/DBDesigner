@@ -1,4 +1,5 @@
 ﻿@page "/columns"
+@page "/columns/{tableIndex}"
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager nav
@@ -14,7 +15,7 @@ else if (DataStore.activeDatabase.tables.Count == 0)
 else
 {
     <h1>Columns</h1>
-    <button @onclick="@(()=>nav.NavigateTo("/createcolumn"))">Create column</button>
+    <button @onclick="navColumns">Create column</button>
     <select @bind="table">
         @foreach (string s in Choices.GetTableNames())
         {
@@ -76,7 +77,19 @@ else
                         @(c.defaultValueSupported.ToString())
                     </td>
                     <td>
-                        @(c.defaultValue)
+                        @if (c.defaultValue == null)
+                        {
+                            @("NULL")
+                        }
+                        else if(c is TextColumn)
+                        {
+                            @("'"+c.defaultValue+"'")
+                        }
+                        else
+                        {
+                            @(c.defaultValue)
+                        }
+
                     </td>
                     <td>
                         @if(c is EnumColumn)
@@ -156,7 +169,7 @@ else
                     ConstraintPK con = c as ConstraintPK;
                     <tr>
                     <td>@("PRIMARY KEY")</td>
-                    <td>@("PRIMARY KEY")</td>
+                    <td>@("")</td>
                     <td>@(con.GetLocalColumns())</td>
                     <td></td>
                     <td></td>
@@ -169,8 +182,8 @@ else
                 {
                     ConstraintUQ con = c as ConstraintUQ;
                     <tr>
-                <td>@("UNIQUE KEY")</td>
                 <td>@(con.name)</td>
+                <td>@("UNIQUE KEY")</td>
                 <td>@(con.GetLocalColumns())</td>
                 <td></td>
                 <td></td>
@@ -183,8 +196,8 @@ else
                 {
                     ConstraintK con = c as ConstraintK;
                 <tr>
-                <td>@("KEY")</td>
                 <td>@(con.name)</td>
+                <td>@("KEY")</td>
                 <td>@(con.GetLocalColumns())</td>
                 <td></td>
                 <td></td>
@@ -197,8 +210,8 @@ else
                 {
                     ConstraintFK con = c as ConstraintFK;
                     <tr>
-                <td>@("FOREIGN KEY")</td>
                 <td>@(con.name)</td>
+                <td>@("FOREIGN KEY")</td>
                 <td>@(con.GetLocalColumns())</td>
                 <td>@(con.GetRemoteTable())</td>
                 <td>@(con.GetRemoteColumns())</td>
@@ -216,7 +229,9 @@ else
 
 
 @code {
-    public string table { get; set; } = DataStore.activeDatabase.tables.Count > 0 ? Choices.GetTableNames()[0] : "";
+    [Parameter]
+    public string tableIndex { get; set; }
+    public string table { get; set; } = (DataStore.activeDatabase != null && DataStore.activeDatabase.tables.Count > 0) ? Choices.GetTableNames()[0] : "";
     int counter = 0;
     int counter3 = 0; 
 
@@ -245,7 +260,27 @@ else
 
     public void DropConstraint(int row)
     {
-        
+
     }
+
+    public void navColumns()
+    {
+        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        nav.NavigateTo("/createcolumn");
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        int index = -1;
+        int.TryParse(tableIndex, out index);
+        if (DataStore.activeDatabase != null && DataStore.activeDatabase.tables.Count > 0 &&
+            index > 0 && index < DataStore.activeDatabase.tables.Count)
+        {
+            table = DataStore.activeDatabase.tables[index].name;
+        }
+
+        StateHasChanged();
+
+    }
+}
 
