@@ -59,6 +59,11 @@ namespace DBDesignerWIP
             {
                 return false;
             }
+            if (auto_increment < 0)
+            {
+                errorMessage = "Auto increment can't be negative.";
+                return false;
+            }
             else
             {
                 Table t = new Table(name, isTemporary, engine, charset, collate, auto_increment.ToString(), comment, DataStore.activeDatabase);
@@ -66,6 +71,40 @@ namespace DBDesignerWIP
                 DataStore.activeDatabase.tables.Add(t);
 
                 DataStore.batch.Add(t.GetStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool AlterTable(Table table, string name, int autoIncrement, string charset, string collate, string engine, string comment, out string errorMessage)
+        {
+            if (table.name != name && !Check.CheckTableName(name, out errorMessage))
+            {
+                return false;
+            }
+            if (autoIncrement < 0)
+            {
+                errorMessage = "Auto increment can't be negative.";
+                return false;
+            }
+            else
+            {
+                if (name != table.name)
+                {
+                    DataStore.batch.Add(table.GetAlterName(name));
+                    table.name = name;
+                }
+                if (table.engine != engine || int.Parse(table.auto_increment) != autoIncrement || table.collate != collate || table.charset != charset || table.comment != comment)
+                {
+                    table.engine = engine;
+                    table.auto_increment = autoIncrement.ToString();
+                    table.collate = collate;
+                    table.charset = charset;
+                    table.comment = comment;
+                    DataStore.batch.Add(table.GetAlterStatement());
+                }
+
 
                 errorMessage = "";
                 return true;

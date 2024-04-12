@@ -1,22 +1,21 @@
-﻿@page "/createtable"
+﻿@page "/altertable/{tableIndex}"
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager nav
-<h1>Create new table</h1>
+<h1>Alter table</h1>
 @if (DataStore.activeDatabase == null)
 {
-    @("No database selected!")
+    <div class="err">No database selected.</div>
+}
+else if (table == null)
+{
+    <div class="err">No table found.</div>
 }
 else
 {
     <div class="formElementWrapper">
         <div class="formLabel">@("Name: ")</div>
         <div class="formElement"><InputText @bind-Value="name" /></div>
-    </div>
-
-    <div class="formElementWrapper">
-        <div class="formLabel">@("Temporary?")</div>
-        <div class="formElement"><InputCheckbox @bind-Value="isTemporary" /></div>
     </div>
 
     <div class="formElementWrapper">
@@ -67,8 +66,10 @@ else
 
 
 
-
-    <button @onclick="CreateTable">Create</button>
+    <div class="formSubmitBtn">
+        <button @onclick="AlterTable">Alter table</button>
+    </div>
+    
 }
 
 
@@ -76,20 +77,22 @@ else
 
 
 @code {
+    [Parameter]
+    public string tableIndex { get; set; }
+    public Table table { get; set; }
+
     public string name { get; set; } = "";
-    public bool isTemporary { get; set; } = false;
     public string engine { get; set; } = Choices.engines[0];
     public string charset { get; set; } = Choices.charsets[0];
     public string collate { get; set; } = Choices.collates[0];
     public int autoIncrement { get; set; } = 0;
     public string comment { get; set; } = "";
 
-    public void CreateTable()
+    public void AlterTable()
     {
         string errorMessage = "";
-        if (Methods.CreateTable(name, isTemporary, engine, charset, charset+collate, autoIncrement, comment, out errorMessage))
+        if (Methods.AlterTable(table, name, autoIncrement, charset, charset+collate, engine, comment, out errorMessage))
         {
-            //JS.InvokeVoidAsync("alert", "Table " + name + " created successfully.");
             StateHasChanged();
             nav.NavigateTo("/tables");
         }
@@ -97,13 +100,33 @@ else
         {
             JS.InvokeVoidAsync("alert", errorMessage);
         }
-
     }
 
-    public async void UpdateDropdown(ProgressEventArgs e)
+    protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("cs");
+        if (DataStore.activeDatabase != null)
+        {
+            int index = -1;
+            int.TryParse(tableIndex, out index);
+            if (index < 0) return;
+            else
+            {
+                if (DataStore.activeDatabase.tables.Count > index)
+                {
+                    table = DataStore.activeDatabase.tables[index];
+
+                    name = table.name;
+                    engine = table.engine;
+                    charset = table.charset;
+                    collate = table.collate.Substring(table.charset.Length, table.collate.Length - table.charset.Length);
+
+                    int ai = 0;
+                    int.TryParse(table.auto_increment, out ai);
+                    autoIncrement = ai;
+                }
+            }
+
+            StateHasChanged();
+        }
     }
-
-
 }

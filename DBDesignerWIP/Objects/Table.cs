@@ -85,7 +85,7 @@ namespace DBDesignerWIP
             }
             result = result.Substring(0,result.Length - 2);
             result = result + "\n) ";
-            result = result + "ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + ";";
+            result = result + "ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT='" + comment + "';";
             return result;
         }
 
@@ -197,6 +197,16 @@ namespace DBDesignerWIP
         {
             IntegerColumn ic = new IntegerColumn("DefaultColDbDes", true, "INT", false, null, "DBDesigner default column", this, 11, false, false, false);
             this.columns.Add(ic);
+        }
+
+        public string GetAlterStatement()
+        {
+            return "ALTER TABLE `" + this.parent.name + "`.`" + name + "` ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT=" + comment + ";";
+        }
+
+        public string GetAlterName(string newName)
+        {
+            return "ALTER TABLE `" + this.parent.name + "`.`" + name + " RENAME '" + newName + "';"; 
         }
     }
 }

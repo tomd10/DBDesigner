@@ -147,5 +147,30 @@ namespace DBDesignerWIP
             }
             else return null;
         }
+
+        public bool GetKeyRequirementByFK(Constraint key, out ConstraintFK fkRef)
+        {
+            foreach (Table t in tables)
+            {
+                foreach (Constraint c in t.constraints)
+                {
+
+                    if (c is ConstraintFK)
+                    {
+                        ConstraintFK fk = (ConstraintFK)c;
+                        int l1 = key.localColumns.Count;
+                        int l2 = fk.remoteColumns.Count;
+
+                        if (fk.remoteColumns.All(key.localColumns.Contains))
+                        {
+                            fkRef = fk;
+                            return true;
+                        }
+                    }       
+                }
+            }
+            fkRef = null;
+            return false;
+        }
     }
 }

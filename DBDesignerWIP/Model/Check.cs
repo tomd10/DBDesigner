@@ -475,11 +475,26 @@ namespace DBDesignerWIP
 
         public static bool CheckDropConstraint(int row, out string errorMessage)
         {
+            Constraint c = DataStore.activeTable.constraints[row];
+            if (!(c is ConstraintFK))
+            {
+                ConstraintFK fkRef;
+                if (DataStore.activeDatabase.GetKeyRequirementByFK(c,out fkRef ))
+                {
+                    errorMessage = "Key needed in FOREIGN KEY " + fkRef.name + " of table " + fkRef.parent.name +" .";
+                    return false;
+                }
+            }
             errorMessage = "";
             return true;
         }
         public static bool CheckDropColumn(int row, out string errorMessage)
         {
+            if (DataStore.activeTable.columns.Count == 1)
+            {
+                errorMessage = "Can't drop last column.";
+                return false;
+            }
             Column c = DataStore.activeTable.columns[row];
             List<Constraint> constraints = new List<Constraint>();
 

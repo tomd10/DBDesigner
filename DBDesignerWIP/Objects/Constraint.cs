@@ -4,7 +4,8 @@ namespace DBDesignerWIP
     public class Constraint
     {
         public Table parent { get; set; }
-
+        public string name { get; set; } = "";
+        public List<Column> localColumns { get; set; } = new List<Column>();
         public Constraint (Table parent)
         {
 
@@ -50,10 +51,9 @@ namespace DBDesignerWIP
 
     public class ConstraintPK : Constraint
     {
-        public List<Column> localColumns { get; set; } = new List<Column>();
-
         public ConstraintPK(Table parent, List<Column> localColumns) : base (parent)
         {
+            this.name = "PRIMARY KEY";
             this.localColumns = localColumns;
             this.parent = parent;
         }
@@ -61,6 +61,7 @@ namespace DBDesignerWIP
         public ConstraintPK(Table parent, string cmd) : base (parent, cmd)
         {
             this.parent = parent;
+            this.name = "PRIMARY KEY";
             List<string> colNames = Text.GetUnwrappedBracket(cmd, 0);
             foreach (string colName in colNames)
             {
@@ -98,8 +99,6 @@ namespace DBDesignerWIP
 
     public class ConstraintFK : Constraint
     {
-        public string name { get; set; } = "";
-        public List<Column> localColumns { get; set; } = new List<Column>();
         public List<Column> remoteColumns { get; set; } = new List<Column>();
         public Table remoteTable { get; set; }
         public string onUpdate { get; set; } = "";
@@ -185,8 +184,6 @@ namespace DBDesignerWIP
 
     public class ConstraintUQ : Constraint
     {
-        public string name { get; set; }
-        public List<Column> localColumns { get; set; } = new List<Column>();
         public ConstraintUQ(Table parent, string name, List<Column> localColumns) : base(parent)
         {
             this.name = name;
@@ -234,8 +231,6 @@ namespace DBDesignerWIP
 
     public class ConstraintK : Constraint
     {
-        public string name { get; set; } = "";
-        public List<Column> localColumns { get; set; } = new List<Column>();
 
         public ConstraintK(Table parent, string name, List<Column> localColumns) : base(parent)
         {

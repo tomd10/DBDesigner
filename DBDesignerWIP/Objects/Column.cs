@@ -81,26 +81,7 @@
             List<Constraint> list = new List<Constraint>();
             foreach (Constraint c in parent.constraints)
             {
-                if (c is ConstraintPK)
-                {
-                    ConstraintPK constr = (ConstraintPK)c;
-                    if (constr.localColumns.Contains(this)) list.Add(c);
-                }
-                else if (c is ConstraintUQ)
-                {
-                    ConstraintUQ constr = (ConstraintUQ)c;
-                    if (constr.localColumns.Contains(this)) list.Add(c);
-                }
-                else if (c is ConstraintK)
-                {
-                    ConstraintK constr = (ConstraintK)c;
-                    if (constr.localColumns.Contains(this)) list.Add(c);
-                }
-                else if (c is ConstraintFK)
-                {
-                    ConstraintFK constr = (ConstraintFK)c;
-                    if (constr.localColumns.Contains(this)) list.Add(c);
-                }
+                if (c.localColumns.Contains(this)) list.Add(c);
             }
 
             return list;
