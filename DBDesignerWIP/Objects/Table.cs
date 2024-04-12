@@ -163,28 +163,34 @@ namespace DBDesignerWIP
             return false;
         }
 
-        public bool GetColumnKeyed(Column col)
+        public List<Constraint> GetConstraintsOfColumn(Column col)
         {
+            List<Constraint> list = new List<Constraint>();
             foreach (Constraint c in constraints)
             {
                 if (c is ConstraintPK)
                 {
                     ConstraintPK cp = (ConstraintPK)c;
-                    if (cp.localColumns.Contains(col)) return true;
+                    if (cp.localColumns.Contains(col)) list.Add(cp);
                 }
                 if (c is ConstraintK)
                 {
                     ConstraintK cp = (ConstraintK)c;
-                    if (cp.localColumns.Contains(col)) return true;
+                    if (cp.localColumns.Contains(col)) list.Add(cp);
                 }
                 if (c is ConstraintUQ)
                 {
                     ConstraintUQ cp = (ConstraintUQ)c;
-                    if (cp.localColumns.Contains(col)) return true;
+                    if (cp.localColumns.Contains(col)) list.Add(cp);
+                }
+                if (c is ConstraintFK)
+                {
+                    ConstraintFK cp = (ConstraintFK)c;
+                    if (cp.localColumns.Contains(col))list.Add(cp);
                 }
             }
 
-            return false;
+            return list;
         }
 
         public void CreateDefaultColumn()

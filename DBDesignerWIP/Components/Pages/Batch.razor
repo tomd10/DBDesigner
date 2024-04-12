@@ -2,11 +2,36 @@
 @inject IJSRuntime JS
 @rendermode InteractiveServer
 <h1>Batch</h1>
+<link rel="stylesheet" href="/styles.css" />
+<div class="commandsBox">
+    @foreach (string s in DataStore.batch)
+    {
 
-@foreach (string s in DataStore.batch)
-{
-    <div>@s</div>
-}
+        string[] words = s.Split(" ");
+        <div class="commandLine">
+        @for (int i = 0; i < words.Length-1; i++)
+        {
+            if (Choices.keywords.Contains(words[i]))
+            {
+                <span class="keyword">@words[i] @("") </span>
+            }
+            else
+            {
+                @(words[i] + " ")
+            }
+        }
+        @if (Choices.keywords.Contains(words[words.Length-1]))
+        {
+            <span class="keyword">@words[words.Length - 1]</span>
+        }
+        else
+        {
+            @(words[words.Length - 1])
+        } 
+        </div>
+    }
+</div>
+
 
 @code {
     

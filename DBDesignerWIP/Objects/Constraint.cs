@@ -82,7 +82,7 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.name + "` DROP PRIMARY KEY;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP PRIMARY KEY;";
         }
 
         public string GetLocalColumns()
@@ -154,7 +154,7 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
         }
 
         public string GetLocalColumns()
@@ -218,7 +218,7 @@ namespace DBDesignerWIP
         }
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
         }
 
         public string GetLocalColumns()
@@ -269,7 +269,7 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
         }
         public string GetLocalColumns()
         {

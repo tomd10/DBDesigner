@@ -1,4 +1,5 @@
 ﻿using DBDesignerWIP;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,10 @@ namespace DBDesignerWIP
         public static readonly List<string> datetimeColumn = new List<string>() { "DATETIME", "DATE", "TIME", "TIMESTAMP", "YEAR" };
         public static readonly List<string> onUpdateDelete = new List<string>() { "", "RESTRICT", "CASCADE", "SET NULL", "NO ACTION", "SET DEFAULT" };
         public static readonly List<string> engines = new List<string>() { "InnoDB", "Aria", "MEMORY" };
+        public static readonly List<string> keywords = new List<string>() {"CREATE", "TABLE", "DATABASE", "IF", "NOT", "EXISTS", "DEFAULT", "NULL", 
+            "ENGINE", "AUTO_INCREMENT", "DROP", "ALTER", "CHARACTER", "SET", "COLLATE", "COLUMN", "KEY", "CONSTRAINT", "PRIMARY", "UNIQUE", "FOREIGN", "UNSIGNED",
+        "ZEROFILL", "ADD"};
+
 
         public static List<string> dbNames = new List<string>();
         public static List<string> tableNames = new List<string>();

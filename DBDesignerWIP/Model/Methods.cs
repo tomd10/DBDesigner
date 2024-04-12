@@ -222,5 +222,38 @@ namespace DBDesignerWIP
             }
         }
 
+        public static bool DropConstraint(int row, out string errorMessage)
+        {
+            if (!Check.CheckDropConstraint(row, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                Constraint c = DataStore.activeTable.constraints[row];
+                DataStore.batch.Add(c.GetDropStatement());
+                DataStore.activeTable.constraints.Remove(c);
+
+                errorMessage = "";
+                return true;
+            }
+        }
+
+        public static bool DropColumn(int row, out string errorMessage)
+        {
+            if(!Check.CheckDropColumn(row, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                Column c = DataStore.activeTable.columns[row];
+                DataStore.batch.Add(c.GetDropStatement());
+                DataStore.activeTable.columns.Remove(c);
+                errorMessage = "";
+                return true;
+            }
+        }
+
     }
 }

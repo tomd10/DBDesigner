@@ -472,5 +472,53 @@ namespace DBDesignerWIP
             errorMessage = "";
             return true;
         }
+
+        public static bool CheckDropConstraint(int row, out string errorMessage)
+        {
+            errorMessage = "";
+            return true;
+        }
+        public static bool CheckDropColumn(int row, out string errorMessage)
+        {
+            Column c = DataStore.activeTable.columns[row];
+            List<Constraint> constraints = new List<Constraint>();
+
+            List<ConstraintFK> remote = DataStore.activeDatabase.GetColumnFKReference(c);
+            List<Constraint> local = DataStore.activeTable.GetConstraintsOfColumn(c);
+            constraints.AddRange(remote);
+            constraints.AddRange(local);
+
+            if(constraints.Count == 0)
+            {
+                errorMessage = "";
+                return true;
+            }
+            else
+            {
+                errorMessage = "Can't drop column " + c.name + ". It's referenced by:\n";
+                foreach (Constraint con in constraints)
+                {
+                    //errorMessage = errorMessage + c.name + " of table " + c.parent.name + "\n";
+                    if (con is ConstraintFK)
+                    {
+                        errorMessage = errorMessage + "FOREIGN KEY " + (con as ConstraintFK).name + " of table " + (con as ConstraintFK).parent.name + "\n";
+                    }
+                    else if (con is ConstraintPK)
+                    {
+                        errorMessage = errorMessage + "PRIMARY KEY of table " + (con as ConstraintPK).parent.name + "\n";
+                    }
+                    else if (con is ConstraintUQ)
+                    {
+                        errorMessage = errorMessage + "UNIQUE KEY " + (con as ConstraintUQ).name + " of table " + (con as ConstraintUQ).parent.name + "\n";
+                    }
+                    else if (con is ConstraintK)
+                    {
+                        errorMessage = errorMessage + "KEY " + (con as ConstraintK).name + " of table " + (con as ConstraintK).parent.name + "\n";
+                    }
+                }
+                return false;
+            }
+        }
+
     }
 }

@@ -242,14 +242,15 @@ else
 
     public void Drop(int row)
     {
-        string name, errorMessage;
-        if (Methods.DropTable(row, out name, out errorMessage))
+        string errorMessage;
+        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        if (!Methods.DropColumn(row, out errorMessage))
         {
-
+            JS.InvokeVoidAsync("alert", errorMessage);
         }
         else
         {
-            JS.InvokeVoidAsync("alert", errorMessage);
+            
         }
     } 
 
@@ -260,7 +261,16 @@ else
 
     public void DropConstraint(int row)
     {
-
+        string errorMessage;
+        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        if (!Methods.DropConstraint(row, out errorMessage))
+        {
+            JS.InvokeVoidAsync("alert", errorMessage);
+        }
+        else
+        {
+            
+        }
     }
 
     public void navColumns()
