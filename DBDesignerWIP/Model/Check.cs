@@ -237,7 +237,7 @@ namespace DBDesignerWIP
                 errorMessage = "Name maximum length is 64 characters";
                 return false;
             }
-            if (name == null ||  name.Length == 0)
+            if (name == null || name.Length == 0)
             {
                 errorMessage = "Name mustn't be empty.";
                 return false;
@@ -245,7 +245,7 @@ namespace DBDesignerWIP
             for (int i = 0; i < name.Length; i++)
             {
                 char ch = name[i];
-                if (!(char.IsAsciiDigit(ch) || char.IsAsciiLetter(ch) || ch == '_' || ch == '$' ))
+                if (!(char.IsAsciiDigit(ch) || char.IsAsciiLetter(ch) || ch == '_' || ch == '$'))
                 {
                     errorMessage = "Name must contain only 0-9, A-Z, a-z and $ or _ characters.";
                     return false;
@@ -262,7 +262,7 @@ namespace DBDesignerWIP
             {
                 foreach (Database d in DataStore.databases)
                 {
-                    if (d.name ==  name)
+                    if (d.name == name)
                     {
                         errorMessage = "Duplicate database name.";
                         return false;
@@ -297,7 +297,7 @@ namespace DBDesignerWIP
             {
                 return false;
             }
-            if(!DataStore.activeTable.GetColumnNameAvailable(name))
+            if (!DataStore.activeTable.GetColumnNameAvailable(name))
             {
                 errorMessage = "Duplicate column name.";
                 return false;
@@ -310,7 +310,7 @@ namespace DBDesignerWIP
             string defa = (defaultValue.ToUpper() == "#NULL") ? null : defaultValue;
             if (defa != "")
             {
-                if(!Check.CheckDefaultString(defa, type, size, nullAllowed, out errorMessage))
+                if (!Check.CheckDefaultString(defa, type, size, nullAllowed, out errorMessage))
                 {
                     return false;
                 }
@@ -331,7 +331,7 @@ namespace DBDesignerWIP
                 errorMessage = "Duplicate column name.";
                 return false;
             }
-            if(zerofill && !unsigned)
+            if (zerofill && !unsigned)
             {
                 errorMessage = "ZEROFILLed column must be UNSIGNED.";
                 return false;
@@ -479,10 +479,21 @@ namespace DBDesignerWIP
             if (!(c is ConstraintFK))
             {
                 ConstraintFK fkRef;
-                if (DataStore.activeDatabase.GetKeyRequirementByFK(c,out fkRef ))
+                if (DataStore.activeDatabase.GetKeyRequirementByFK(c, out fkRef))
                 {
-                    errorMessage = "Key needed in FOREIGN KEY " + fkRef.name + " of table " + fkRef.parent.name +" .";
+                    errorMessage = "Key needed in FOREIGN KEY " + fkRef.name + " of table " + fkRef.parent.name + " .";
                     return false;
+                }
+            }
+            if (c.localColumns.Count == 1) 
+            {
+                if (c.localColumns[0] is IntegerColumn)
+                {
+                    if ((c.localColumns[0] as IntegerColumn).autoincrement)
+                    {
+                        errorMessage = "Key needed for AUTO_INCREMENT.";
+                        return false;
+                    }
                 }
             }
             errorMessage = "";
@@ -503,7 +514,7 @@ namespace DBDesignerWIP
             constraints.AddRange(remote);
             constraints.AddRange(local);
 
-            if(constraints.Count == 0)
+            if (constraints.Count == 0)
             {
                 errorMessage = "";
                 return true;
@@ -535,5 +546,46 @@ namespace DBDesignerWIP
             }
         }
 
+        public static bool CheckAlterColumn(int row, out string errorMessage)
+        {
+            Column c = DataStore.activeTable.columns[row];
+            List<Constraint> constraints = new List<Constraint>();
+
+            List<ConstraintFK> remote = DataStore.activeDatabase.GetColumnFKReference(c);
+            List<Constraint> local = DataStore.activeTable.GetConstraintsOfColumn(c);
+            constraints.AddRange(remote);
+            constraints.AddRange(local);
+
+            if (constraints.Count == 0)
+            {
+                errorMessage = "";
+                return true;
+            }
+            else
+            {
+                errorMessage = "Can't modify column " + c.name + ". It's referenced by:\n";
+                foreach (Constraint con in constraints)
+                {
+                    //errorMessage = errorMessage + c.name + " of table " + c.parent.name + "\n";
+                    if (con is ConstraintFK)
+                    {
+                        errorMessage = errorMessage + "FOREIGN KEY " + (con as ConstraintFK).name + " of table " + (con as ConstraintFK).parent.name + "\n";
+                    }
+                    else if (con is ConstraintPK)
+                    {
+                        errorMessage = errorMessage + "PRIMARY KEY of table " + (con as ConstraintPK).parent.name + "\n";
+                    }
+                    else if (con is ConstraintUQ)
+                    {
+                        errorMessage = errorMessage + "UNIQUE KEY " + (con as ConstraintUQ).name + " of table " + (con as ConstraintUQ).parent.name + "\n";
+                    }
+                    else if (con is ConstraintK)
+                    {
+                        errorMessage = errorMessage + "KEY " + (con as ConstraintK).name + " of table " + (con as ConstraintK).parent.name + "\n";
+                    }
+                }
+                return false;
+            }
+        }
     }
 }

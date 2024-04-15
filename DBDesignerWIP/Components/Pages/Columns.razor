@@ -28,6 +28,7 @@ else
                 <td>Name</td>
                 <td>Type</td>
                 <td>Size</td>
+                <td>NULL</td>
                 <td>Default</td>
                 <td>Default value</td>
                 <td>Options</td>
@@ -38,6 +39,7 @@ else
                 <td>Collate</td>
                 <td>Edit</td>
                 <td>Drop</td>
+                <td>Drop PK</td>
                 <td>Comment</td>
             </tr>
         </thead>
@@ -73,6 +75,7 @@ else
                         }
                         else @("")
                     </td>
+                    <td>@c.nullAllowed</td>
                     <td>
                         @(c.defaultValueSupported.ToString())
                     </td>
@@ -137,6 +140,12 @@ else
                     </td>
                     <td @onclick="@(() => Edit(counter2))">Edit</td>
                     <td @onclick="@(() => Drop(counter2))">Drop</td>
+                    <td @onclick="@(() => DropAI(counter2))">
+                        @if (c is IntegerColumn && (c as IntegerColumn).autoincrement)
+                        {
+                            @("Drop")
+                        }
+                    </td>
                     <td>@c.comment</td>
                 </tr>
                 counter = counter + 1;
@@ -237,7 +246,16 @@ else
 
     public void Edit(int row)
     {
-
+        string errorMessage;
+        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        if (!Methods.AlterColumn(row, out errorMessage))
+        {
+            JS.InvokeVoidAsync("alert", errorMessage);
+        }
+        else
+        {
+            nav.NavigateTo("/altercolumn/" + row.ToString());
+        }
     }
 
     public void Drop(int row)
@@ -250,9 +268,15 @@ else
         }
         else
         {
-            
+
         }
     } 
+
+    public void DropAI(int row)
+    {
+        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        Methods.DropAutoIncrement(row);
+    }
 
     public void EditConstraint(int row)
     {

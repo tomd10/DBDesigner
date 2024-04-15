@@ -42,7 +42,7 @@
 
         public string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.name + "` DROP COLUMN `" + name + "`;"; 
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name+ "` DROP COLUMN `" + name + "`;"; 
         }
 
         public static Column CreateColumn(Table parent, string s)
@@ -90,6 +90,52 @@
         public string GetAddColumnStatement()
         {
             return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD COLUMN " + GetStatement() + ";";
+        }
+
+        public string GetAlterColumnStatement(Column newCol, string position)
+        {
+            string ret;
+            if (this.name.Split(" ").Length == 1)
+            {
+                ret = "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` CHANGE COLUMN `" + name + "` " + newCol.GetStatement();
+            }
+            else
+            {
+                ret = "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` CHANGE COLUMN `" + name.Split(" ")[1] + "` " + newCol.GetStatement();
+            }
+            
+            if (position != null && position != "")
+            {
+                ret = ret + " " + position + ";";
+            }
+            else ret = ret + ";";
+
+            return ret;
+        }
+
+        public void ReplaceCol(Column newCol, string position) 
+        {
+            if (position == "" || position == null)
+            {
+                parent.columns.Add(newCol);
+                parent.columns.Remove(this);
+            }
+            else if (position == "FIRST")
+            {
+                parent.columns.Insert(0, newCol);
+                parent.columns.Remove(this);
+            }
+            else
+            {
+                string name = position.Split(" ")[1];
+                Column c = parent.GetColumnByName(name);
+                int index = Array.IndexOf(parent.columns.ToArray(), c);
+                if (index != -1)
+                {
+                    parent.columns.Insert(index+1, newCol);
+                    parent.columns.Remove(this);
+                }
+            }
         }
 
     }
@@ -194,7 +240,6 @@
         {
             string result = "  `" + name + "` " + type +"(";
             foreach (string field in options) { result = result + "'" + field + "',"; }
-            result = result.Substring(0, result.Length - 1);
             result = result.Substring(0, result.Length - 1);
             result = result + ") ";
             if (!nullAllowed) result = result + "NOT NULL ";
@@ -322,7 +367,7 @@
             if (!nullAllowed) result = result + "NOT NULL ";
             if (defaultValueSupported)
             {
-                if (defaultValue != null) { result = result + "DEFAULT " + defaultValue + " "; }
+                if (defaultValue != null) { result = result + "DEFAULT " + defaultValue.Replace(",", ".") + " "; }
                 else { result = result + "DEFAULT NULL "; }
             }
             if (comment != "")
