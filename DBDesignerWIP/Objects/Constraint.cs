@@ -28,7 +28,7 @@ namespace DBDesignerWIP
 
         public string GetAddStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD " + GetStatement() + ";";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD " + GetStatement() + " ;";
         }
 
         public string GetConditionalDropStatement()
@@ -97,7 +97,7 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP PRIMARY KEY;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP PRIMARY KEY ;";
         }
 
         public string GetLocalColumns()
@@ -149,7 +149,7 @@ namespace DBDesignerWIP
 
         public override string GetStatement()
         {
-            string result = "CONSTRAINT `" + name + "` FOREIGN KEY(";
+            string result = "CONSTRAINT `" + name + "` FOREIGN KEY (";
             foreach (Column c in localColumns)
             {
                 result = result + "`" + c.name + "`,";
@@ -167,7 +167,7 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "` ;";
         }
 
         public string GetLocalColumns()
@@ -229,7 +229,7 @@ namespace DBDesignerWIP
         }
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "` ;";
         }
 
         public string GetLocalColumns()
@@ -278,7 +278,7 @@ namespace DBDesignerWIP
 
         public override string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "`;";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + this.name + "` ;";
         }
         public string GetLocalColumns()
         {

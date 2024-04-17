@@ -587,5 +587,68 @@ namespace DBDesignerWIP
                 return false;
             }
         }
+
+        public static bool CheckCreateFKConstraint(string name, bool[] arrayColumn, Table remoteTable, bool[] arrayRemoteColumn, out string errorMessage)
+        {
+            if (!IsValidName(name, out errorMessage))
+            {
+                return false;
+            }
+            foreach (Constraint c in DataStore.activeTable.constraints)
+            {
+                if (c.name == name)
+                {
+                    errorMessage = "Constraint `" + name + "` already exists.";
+                    return false;
+                }
+            }
+            if (Methods.GetTrues(arrayColumn) != Methods.GetTrues(arrayRemoteColumn))
+            {
+                errorMessage = "Column count must match.";
+                return false;
+            }
+            if (Methods.GetTrues(arrayColumn) == 0)
+            {
+                errorMessage = "No column selected.";
+                return false;
+            }
+            if (Methods.GetTrues(arrayColumn) > 1)
+            {
+                errorMessage = "Composite FOREIGN KEY not supported.";
+                return false;
+            }
+
+            Column localColumn = DataStore.activeTable.columns[Array.IndexOf(arrayColumn, true)];
+            Column remoteColumn = remoteTable.columns[Array.IndexOf(arrayRemoteColumn, true)];
+
+            if (localColumn.type != remoteColumn.type)
+            {
+                errorMessage = "Types of columns must match.";
+                return false;
+            }
+            if (localColumn.type == "VARCHAR" || localColumn.type == "CHAR")
+            {
+                TextColumn tcLocal = (TextColumn)localColumn;
+                TextColumn tcRemote = (TextColumn)remoteColumn;
+                if (tcLocal.size != tcRemote.size)
+                {
+                    errorMessage = "Sizes of columns must match.";
+                    return false;
+                }
+            }
+            if (localColumn.type == "VARBINARY" || localColumn.type == "BINARY")
+            {
+                BinaryColumn tcLocal = (BinaryColumn)localColumn;
+                BinaryColumn tcRemote = (BinaryColumn)remoteColumn;
+                if (tcLocal.size != tcRemote.size)
+                {
+                    errorMessage = "Sizes of columns must match.";
+                    return false;
+                }
+            }
+
+            errorMessage = "";
+            return true;
+        }
     }
 }

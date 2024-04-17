@@ -472,5 +472,92 @@ namespace DBDesignerWIP
                 }
             }
         }
+
+        public static bool CreateSimpleConstraint(Choices.ConstraintTypes ct,string name, bool[] arrayColumn, out string errorMessage)
+        {
+            if(!Check.IsValidName(name, out errorMessage) && ct != Choices.ConstraintTypes.PrimaryKey)
+            {
+                return false;
+            }
+            foreach (Constraint c in  DataStore.activeTable.constraints)
+            {
+                if (c.name == name)
+                {
+                    errorMessage = "Constraint `" + name + "` already exists.";
+                    return false;
+                }
+            }
+            if (GetTrues(arrayColumn) < 1)
+            {
+                errorMessage = "At least one column must be selected.";
+                return false;
+            }
+            if (ct == Choices.ConstraintTypes.PrimaryKey && DataStore.activeTable.GetPrimaryKey() != null)
+            {
+                errorMessage = "Primary key of table `" + DataStore.activeTable.name + "` already exists.";
+                return false;
+            }
+
+            List<Column> list = new List<Column>();
+            for (int i = 0; i < DataStore.activeTable.columns.Count; i++)
+            {
+                if (arrayColumn[i]) list.Add(DataStore.activeTable.columns[i]);
+            }
+
+            Constraint k = null;
+            if (ct == Choices.ConstraintTypes.Key)
+            {
+                k = new ConstraintK(DataStore.activeTable, name, list);
+            }
+
+            if (ct == Choices.ConstraintTypes.PrimaryKey)
+            {
+                k = new ConstraintPK(DataStore.activeTable, list);
+            }
+
+            if (ct == Choices.ConstraintTypes.UniqueKey)
+            {
+                k = new ConstraintUQ(DataStore.activeTable, name, list);
+            }
+
+            DataStore.activeTable.constraints.Add(k);
+            DataStore.batch.Add(k.GetAddStatement());
+
+            errorMessage = "";
+            return true;
+
+        }
+
+        public static int GetTrues(bool[] arr)
+        {
+            int ct = 0;
+            if (arr == null) return -1;
+            foreach (bool b in arr) { if (b) ct++; }
+            return ct;
+        }
+
+        public static bool CreateFKConstraint(string name, bool[] arrayColumn, Table remoteTable, bool[] arrayRemoteColumn, out string errorMessage)
+        {
+            if (!Check.CheckCreateFKConstraint(name, arrayColumn, remoteTable, arrayRemoteColumn, out errorMessage))
+            {
+                return false;
+            }
+            else
+            {
+                Column localColumn = DataStore.activeTable.columns[Array.IndexOf(arrayColumn, true)];
+                Column remoteColumn = remoteTable.columns[Array.IndexOf(arrayRemoteColumn, true)];
+
+                ConstraintK k = new ConstraintK(remoteTable, remoteColumn.name + "_KEY_" + GetRandomString(10), new List<Column>() { remoteColumn });
+                remoteTable.constraints.Add(k);
+                DataStore.batch.Add(k.GetAddStatement());
+
+                ConstraintFK fk = new ConstraintFK(DataStore.activeTable, name, new List<Column>() { localColumn}, new List<Column>() { remoteColumn }, remoteTable, "", "");
+                DataStore.activeTable.constraints.Add(fk);
+                DataStore.batch.Add(fk.GetAddStatement());
+
+                errorMessage = "";
+                return true;
+            }
+        }
     }
 }

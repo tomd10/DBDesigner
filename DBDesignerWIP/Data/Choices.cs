@@ -22,7 +22,7 @@ namespace DBDesignerWIP
         public static readonly List<string> engines = new List<string>() { "InnoDB", "Aria", "MEMORY" };
         public static readonly List<string> keywords = new List<string>() {"CREATE", "TABLE", "DATABASE", "IF", "NOT", "EXISTS", "DEFAULT", "NULL", 
             "ENGINE", "AUTO_INCREMENT", "DROP", "ALTER", "CHARACTER", "SET", "COLLATE", "COLUMN", "KEY", "CONSTRAINT", "PRIMARY", "UNIQUE", "FOREIGN", "UNSIGNED",
-        "ZEROFILL", "ADD", "RENAME", "CHANGE"};
+        "ZEROFILL", "ADD", "RENAME", "CHANGE", "REFERENCES"};
 
 
         public static List<string> dbNames = new List<string>();
@@ -74,5 +74,11 @@ namespace DBDesignerWIP
 
             return names;
         }
+
+        public enum ConstraintTypes
+        {
+            Key, PrimaryKey, UniqueKey, ForeignKey
+        }
+
     }
 }

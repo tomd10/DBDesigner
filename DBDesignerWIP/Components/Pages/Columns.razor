@@ -154,7 +154,7 @@ else
     </table>
 
     <h1>Constraints</h1>
-    <button @onclick="@(()=>nav.NavigateTo("/createconstraint"))">Create constraint</button>
+    <button @onclick="navConstraints">Create constraint</button>
     <table>
         <thead>
             <td>Name</td>
@@ -293,7 +293,7 @@ else
         }
         else
         {
-            
+
         }
     }
 
@@ -301,6 +301,12 @@ else
     {
         DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
         nav.NavigateTo("/createcolumn");
+    }
+
+    public void navConstraints()
+    {
+        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        nav.NavigateTo("/createconstraint");
     }
 
     protected override async Task OnInitializedAsync()
