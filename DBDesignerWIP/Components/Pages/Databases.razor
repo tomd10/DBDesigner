@@ -7,11 +7,11 @@
 @{
     if (DataStore.dbConnection != null && !DataStore.databasesLoaded)
     {
-        <button @onclick="LoadConnect">Load databases from connection</button> <br>
+        <button @onclick="LoadConnect" class="upperButton">Load databases from connection</button> <br>
         DataStore.databasesLoaded = true;
     }
 }
-<button @onclick="@(()=>nav.NavigateTo("/createdb"))">Create database</button>
+<button @onclick="@(()=>nav.NavigateTo("/createdb"))" class="upperButton">Create database</button>
 List of databases:
 <table>
     <thead>

@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager nav
-
+<link rel="stylesheet" href="/styles.css" />
 @if(DataStore.activeDatabase == null)
 {
     <div class="err">No database selected</div>
@@ -17,7 +17,7 @@ else
     <InputRadioGroup @bind-Value="ct" id="typeDropdown">
         @foreach (var type in Enum.GetValues<Choices.ColumnTypes>())
         {
-            <div>
+            <div class="radioButton">
                 <label>
                     <InputRadio Value="type"></InputRadio>
                     @type

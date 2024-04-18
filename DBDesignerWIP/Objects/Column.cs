@@ -42,7 +42,7 @@
 
         public string GetDropStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name+ "` DROP COLUMN `" + name + "`;"; 
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name+ "` DROP COLUMN `" + name + "` ;"; 
         }
 
         public static Column CreateColumn(Table parent, string s)
@@ -89,7 +89,7 @@
 
         public string GetAddColumnStatement()
         {
-            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD COLUMN " + GetStatement() + ";";
+            return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD COLUMN " + GetStatement() + " ;";
         }
 
         public string GetAlterColumnStatement(Column newCol, string position)

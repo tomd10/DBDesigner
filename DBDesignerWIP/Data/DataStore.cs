@@ -14,5 +14,6 @@ namespace DBDesignerWIP
         public static SqlDb dbConnection = null;
 
         public static List<string> batch = new List<string>();
+        public static List<string> batchDeNovo = new List<string>();
     }
 }

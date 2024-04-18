@@ -30,16 +30,6 @@ namespace DBDesignerWIP
         {
             return "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` ADD " + GetStatement() + " ;";
         }
-
-        public string GetConditionalDropStatement()
-        {
-            string ret = "IF (OBJECT_ID('" + parent.parent.name + "." + parent.name + "', 'F') IS NOT NULL)\n" +
-                "BEGIN\n" +
-                "ALTER TABLE `" + parent.parent.name + "`.`" + parent.name + "` DROP CONSTRAINT `" + name + "`\n" +
-                "END";
-            return ret;
-        }
-
         public static Constraint CreateConstraint(Table parent, string cmd) 
         {
             string type = Text.GetConstraintType(cmd);

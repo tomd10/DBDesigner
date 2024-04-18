@@ -38,9 +38,12 @@
             </select>
         </div>
     </div>
-    <button @onclick="AlterDatabase">Alter database</button>
+    <button @onclick="AlterDatabase" class="acceptButton">Alter database</button>
 }
-else @("Incorrect parameter.")
+else
+{
+    <div class="err">Incorrect database selected!</div>
+}
 
 @code {
     [Parameter]

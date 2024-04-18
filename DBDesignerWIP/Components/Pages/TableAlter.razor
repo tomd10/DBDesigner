@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager nav
+<link rel="stylesheet" href="/styles.css" />
 <h1>Alter table</h1>
 @if (DataStore.activeDatabase == null)
 {
@@ -66,9 +67,7 @@ else
 
 
 
-    <div class="formSubmitBtn">
-        <button @onclick="AlterTable">Alter table</button>
-    </div>
+    <button @onclick="AlterTable" class="acceptButton">Alter table</button>
     
 }
 

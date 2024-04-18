@@ -559,5 +559,29 @@ namespace DBDesignerWIP
                 return true;
             }
         }
+
+        public static void CreateBatchDeNovo()
+        {
+            List<string> list = new List<string>();
+
+            foreach (Database db in DataStore.databases)
+            {
+                if (db.name == "sys" || db.name == "information_schema" || db.name == "performance_schema" || db.name == "mysql") continue;
+                list.Add(db.GetDropStatement());
+                list.Add(db.GetStatement());
+            }
+
+            foreach (Database db in DataStore.databases)
+            {
+                if (db.name == "sys" || db.name == "information_schema" || db.name == "performance_schema" || db.name == "mysql") continue;
+                foreach (Table table in db.tables)
+                {
+                    
+                    list.Add(table.GetStatement());
+                }
+            }
+
+            DataStore.batchDeNovo = list;
+        }
     }
 }

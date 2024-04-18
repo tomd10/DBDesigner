@@ -38,7 +38,7 @@ namespace DBDesignerWIP
             this.collate = StatementText.GetTableValue(cmd, "COLLATE");
             this.charset = StatementText.GetTableValue(cmd, "CHARSET");
             this.auto_increment = StatementText.GetTableValue(cmd, "AUTO_INCREMENT");
-            this.comment = StatementText.GetTableValue(cmd, "COMMENT");
+            this.comment = StatementText.GetTableValue(cmd, "COMMENT").Replace("'", "").Replace("\"", "").Replace("`", "");
             this.constraintDefs = Text.GetConstraintDefs(cmd);
             foreach (string columnDef in Text.GetColumnDefs(cmd))
             {
@@ -77,15 +77,16 @@ namespace DBDesignerWIP
             result = result + " TABLE IF NOT EXISTS `" + parent.name + "`.`" + name + "` (\n";
             foreach (Column c in columns)
             {
-                result = result + c.GetStatement() + ",\n";
+                result = result + c.GetStatement() + " ,\n";
             }
             foreach (Constraint c in constraints)
             {
-                result = result + c.GetStatement() + ",\n";
+                result = result + c.GetStatement() + " ,\n";
             }
             result = result.Substring(0,result.Length - 2);
             result = result + "\n) ";
             result = result + "ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT='" + comment + "';";
+            Console.WriteLine("#######" + comment);
             return result;
         }
 

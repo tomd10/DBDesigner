@@ -2,9 +2,15 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JS
 @inject NavigationManager nav
+<link rel="stylesheet" href="/styles.css" />
 <h1>Create new database</h1>
 
-Name: <InputText @bind-Value="name"/> <br />
+<div class="formElementWrapper">
+    <div class="formLabel">@("Name:")</div>
+    <div class="formElement">
+        <InputText @bind-Value="name" />
+    </div>
+</div>
 <div class="formElementWrapper">
     <div class="formLabel">@("Charset:")</div>
     <div class="formElement">
@@ -29,7 +35,7 @@ Name: <InputText @bind-Value="name"/> <br />
     </div>
 </div>
 
-<button @onclick="CreateDatabase">Create database</button>
+<button @onclick="CreateDatabase" class="acceptButton">Create database</button>
 
 
 

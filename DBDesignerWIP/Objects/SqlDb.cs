@@ -8,6 +8,7 @@ namespace DBDesignerWIP
     {
         private MySqlConnection conn;
         private MySqlCommand cmd;
+        public string identifier;
 
         public SqlDb(string hostname, string username, string password, string database)
         {
@@ -16,6 +17,8 @@ namespace DBDesignerWIP
             sb.UserID = username;
             sb.Password = password;
             sb.Database = database;
+
+            identifier = username + "@" + hostname;
 
             conn = new MySqlConnection(sb.ToString());
             conn.Open();
@@ -88,6 +91,25 @@ namespace DBDesignerWIP
         {
             cmd.CommandText = "USE " + name + ";";
             cmd.ExecuteNonQuery();
+        }
+
+        public List<string> ExecuteBatch(List<string> commands)
+        {
+            List<string> errors = new List<string>();
+            foreach (string comm in commands)
+            {
+                try
+                {
+                    cmd.CommandText = comm;
+                    cmd.ExecuteNonQuery();
+                }
+                catch
+                {
+                    errors.Add(comm);
+                }
+            }
+
+            return errors;
         }
 
         private List<List<string>> Read()

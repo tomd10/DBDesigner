@@ -1,12 +1,41 @@
 ﻿@page "/dbconnect"
 @inject IJSRuntime JS
 @rendermode InteractiveServer
+<link rel="stylesheet" href="/styles.css" />
 <h1>Database connection</h1>
+<h2>Current database</h2>
+@if (DataStore.dbConnection == null)
+{
+    <div class="info">@("None")</div>
 
-Hostname: <InputText @bind-Value="hostname"/> <br />
-Username: <InputText @bind-Value="username"/> <br />
-Password: <InputText @bind-Value="password"/><br/>
-<button @onclick="Login">Login</button>
+    <div class="formElementWrapper">
+        <div class="formLabel">    @("Hostname:")</div>
+        <div class="formElement">
+           <InputText @bind-Value="hostname" />
+        </div>
+    </div>
+
+    <div class="formElementWrapper">
+        <div class="formLabel">    @("Username:")</div>
+        <div class="formElement">
+            <InputText @bind-Value="username" />
+        </div>
+    </div>
+
+    <div class="formElementWrapper">
+        <div class="formLabel">    @("Password:")</div>
+        <div class="formElement">
+            <InputText @bind-Value="password"/>
+        </div>
+    </div>
+    <button @onclick="Login" class="acceptButton">Login</button>
+}
+else
+{
+    <div class="info">@(DataStore.dbConnection.identifier)</div>
+    <button @onclick="Logout" class="acceptButton">Logout</button>
+}
+
 
 @code {
     public string hostname { get; set; } = "localhost";
@@ -22,5 +51,11 @@ Password: <InputText @bind-Value="password"/><br/>
             JS.InvokeVoidAsync("alert", "Database connection failed.");
         }
         else DataStore.dbConnection = db;
+    }
+
+    public void Logout()
+    {
+        DataStore.dbConnection.Close();
+        DataStore.dbConnection = null;
     }
 }

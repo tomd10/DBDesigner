@@ -3,58 +3,10 @@
 @inject NavigationManager nav
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
-<button @onclick="start">Click</button>
-<button @onclick="cr">cr</button>
-Welcome to your new app.
+<h1>DBDesigner v1.0</h1>
+
 
 @code
 {
-    public SqlDb database;
-    public void start()
-    {
-        database = new SqlDb("localhost", "root", "abba", "");
-        List<string> databases = database.GetDatabases();
-        foreach (string s in databases)
-        {
-            string create = database.GetCreateDatabase(s);
-            Database db = new Database(create);
-            List<string> tables = database.GetTables(s);
-            foreach (string table in tables)
-            {
-                if(table == "INNODB_LOCKS")
-                {
-                    int x = 0;
-                }
-                string cmd = database.GetCreateTable(s, table);
-                Console.WriteLine(cmd);
-                Table t = new Table(db, cmd);
-                Console.WriteLine("----------");
-                Console.WriteLine(t.GetStatement());
-                Console.ReadKey();
-                Console.WriteLine("----------");
-                db.tables.Add(t);
 
-
-
-            }
-            db.LoadConstraints();
-            foreach (Table t in db.tables)
-            {
-                /*
-                Console.WriteLine("----------");
-                Console.WriteLine(t.GetStatement());
-                Console.WriteLine("----------");
-            */
-            }
-
-        }
-
-        database.Close();
-    }
-
-    public void cr()
-    {
-        nav.NavigateTo("/createconstraint");
-    }
 }

@@ -6,16 +6,16 @@
 <link rel="stylesheet" href="styles.css" />
 @if(DataStore.activeDatabase == null)
 {
-    @("No database selected!")
+    <div class="err">@("No database selected!")</div>
 }
 else if (DataStore.activeDatabase.tables.Count == 0)
 {
-    @("Empty database!")
+    <div class="err">@("Empty database!")</div>
 }
 else
 {
     <h1>Columns</h1>
-    <button @onclick="navColumns">Create column</button>
+    <button @onclick="navColumns" class="upperButton">Create column</button>
     <select @bind="table">
         @foreach (string s in Choices.GetTableNames())
         {
@@ -154,7 +154,7 @@ else
     </table>
 
     <h1>Constraints</h1>
-    <button @onclick="navConstraints">Create constraint</button>
+    <button @onclick="navConstraints" class="upperButton">Create constraint</button>
     <table>
         <thead>
             <td>Name</td>
