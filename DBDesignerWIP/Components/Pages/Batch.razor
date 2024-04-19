@@ -88,6 +88,7 @@ else
             <div class="commandLine">
                 @for (int i = 0; i < words.Length; i++)
                 {
+                    Console.WriteLine("#" + words[i] + "#");
                     string[] subwords = words[i].Split("=");
                     
                     string[] subwords1 = words[i].Split("(");
@@ -109,10 +110,16 @@ else
                     }
                     else
                     {
-                        @(words[i] + " ")
+                        if (words[i].Length > 2 && Choices.keywords.Contains(words[i].Substring(2, words[i].Length-2)))
+                        {
+                            @(words[i].Substring(0,2))
+                            <span class="keyword">@(words[i].Substring(2, words[i].Length-2))@(" ")</span>
+                        }
+                        else
+                        {
+                            @(words[i] + " ")
+                        }                      
                     }
-
-
                 }
 
             </div>

@@ -14,7 +14,7 @@
         public static readonly List<string> engines = new List<string>() { "InnoDB", "Aria", "MEMORY" };
         public static readonly List<string> keywords = new List<string>() {"CREATE", "TABLE", "DATABASE", "IF", "NOT", "EXISTS", "DEFAULT", "NULL", 
             "ENGINE", "AUTO_INCREMENT", "DROP", "ALTER", "CHARACTER", "SET", "COLLATE", "COLUMN", "KEY", "CONSTRAINT", "PRIMARY", "UNIQUE", "FOREIGN", "UNSIGNED",
-        "ZEROFILL", "ADD", "RENAME", "CHANGE", "REFERENCES", "DATE", "INT", "SMALLINT", "MEDIUMINT", "TINYINT", "COMMENT", "BIGINT", "CHAR", "VARCHAR",
+        "ZEROFILL", "ADD", "RENAME", "CHANGE", "REFERENCES", "DATE", "INT", "SMALLINT", "MEDIUMINT", "TINYINT", "COMMENT", "BIGINT", "CHAR", "VARCHAR", "\nConstraint",
         "TEXT", "ENUM"};
 
 

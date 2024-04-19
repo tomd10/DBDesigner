@@ -6,7 +6,9 @@
 .commandsBox {
     white-space: pre-wrap;
     font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-    background-color: lightgray;
+    background-color: lightcyan;
+    padding: 1em;
+    border: 2px solid black;
 }
 
 .keyword
@@ -21,7 +23,11 @@
 
 .err
 {
-
+    width: fit-content;
+    min-width: 40%;
+    padding: 1.5em 1em 1.5em 1em;
+    font-weight: bold;
+    background-color: #ffaaaa;
 }
 
 .radioButton
