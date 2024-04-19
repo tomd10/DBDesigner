@@ -1,6 +1,4 @@
-﻿
-
-namespace DBDesignerWIP
+﻿namespace DBDesignerWIP
 {
     public class Database
     {

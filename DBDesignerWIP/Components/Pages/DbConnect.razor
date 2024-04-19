@@ -7,7 +7,7 @@
 @if (DataStore.dbConnection == null)
 {
     <div class="info">@("None")</div>
-
+    <div class="formWrapper">
     <div class="formElementWrapper">
         <div class="formLabel">    @("Hostname:")</div>
         <div class="formElement">
@@ -29,6 +29,7 @@
         </div>
     </div>
     <button @onclick="Login" class="acceptButton">Login</button>
+    </div>
 }
 else
 {

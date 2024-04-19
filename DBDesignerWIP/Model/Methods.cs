@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Extensions.Options;
-using System.Drawing;
-using System.Xml.Linq;
-
-namespace DBDesignerWIP
+﻿namespace DBDesignerWIP
 {
     public static class Methods
     {

@@ -1,6 +1,4 @@
 ﻿using MySqlConnector;
-using System.Collections.Generic;
-using System.Reflection.PortableExecutable;
 
 namespace DBDesignerWIP
 {

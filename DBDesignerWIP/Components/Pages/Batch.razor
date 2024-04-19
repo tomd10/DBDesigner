@@ -16,14 +16,28 @@
       anchorElement.remove();
       URL.revokeObjectURL(url);
     }
+
+    window.clipboardCopy = {
+        copyText: function (text) {
+            navigator.clipboard.writeText(text).then(function () {
+                
+            })
+                .catch(function (error) {
+                    alert(error);
+                });
+        }
+    };
 </script>
+<div class="upperButtonContainer">
 <button @onclick="Restart" class="upperButton">Restart app</button>
 <button @onclick="ToggleBatch" class="upperButton">Batch/De novo</button>
+<button @onclick="Copy" class="upperButton">Copy to clipboard</button>
 <button @onclick="Download" class="upperButton">Download file</button>
 @if(DataStore.dbConnection != null)
 {
     <button @onclick="ExecuteCommands" class="upperButton">Execute commands</button>
 }
+</div>
 @if(batch)
 {
     <div class="commandsBox">
@@ -45,7 +59,7 @@
                     }
                     else if (subwords1.Length == 2 && Choices.keywords.Contains(subwords1[0]))
                     {
-                        <span class="keyword">@subwords1[0]@("(")</span>
+                        <span class="keyword">@subwords1[0]</span>
                         @("(" + subwords1[1] + " ")
                     }
                     else if (Choices.keywords.Contains(words[i]))
@@ -104,12 +118,15 @@ else
             </div>
         }
     </div>
+
+    <InputText @bind-Value="textToCopy" hidden id="inp"></InputText>
 }
 
 
 
 @code {
     public bool batch { get; set; } = true;
+    public string textToCopy { get; set; } = "";
 
     public void ToggleBatch()
     {
@@ -176,5 +193,24 @@ else
         using var streamRef = new DotNetStreamReference(stream: fileStream);
 
         await JS.InvokeVoidAsync("downloadFileFromStream", filename, streamRef);
+    }
+
+    public async void Copy()
+    {
+        string result = "";
+        if (batch)
+        {
+            foreach (string s in DataStore.batch) result = result + s + "\n";
+        }
+        else
+        {
+            foreach (string s in DataStore.batchDeNovo) result = result + s + "\n";
+        }
+        textToCopy = result;
+        StateHasChanged();
+
+        await JS.InvokeVoidAsync("clipboardCopy.copyText", textToCopy);
+
+
     }
 }

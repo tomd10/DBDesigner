@@ -13,26 +13,36 @@ else if (DataStore.activeTable == null)
 }
 else
 {
-    <InputRadioGroup @bind-Value="ct" id="typeDropdown">
-        @foreach (var type in Enum.GetValues<Choices.ConstraintTypes>())
-        {
-            <div>
-                <label>
-                    <InputRadio Value="type"></InputRadio>
-                    @type
-                </label>
-            </div>
-        }
-    </InputRadioGroup>
-    if (ct != Choices.ConstraintTypes.PrimaryKey)
+    <div class="formWrapper">
+        <InputRadioGroup @bind-Value="ct">
+            @foreach (var type in Enum.GetValues<Choices.ConstraintTypes>())
+            {
+                <div class="formElementWrapper">
+                    <div class="formLabel">@type</div>
+                    <div class="formElement"><InputRadio Value="type"></InputRadio></div>
+                </div>
+            }
+        </InputRadioGroup>
+    </div>
+    @if (ct == Choices.ConstraintTypes.ForeignKey && DataStore.activeDatabase.tables.Count < 2)
     {
+        <div class="err">At least two tables are required for FOREIGN KEY constraint.</div>
+    }
+    else
+    {
+        
+    
+    <div class="formWrapper" style="width: 70%;">
+        @if (ct != Choices.ConstraintTypes.PrimaryKey)
+        {
         <div class="formElementWrapper">
             <div class="formLabel">@("Name: ")</div>
             <div class="formElement"><InputText @bind-Value="name" /></div>
         </div>
-    }
-    if (ct != Choices.ConstraintTypes.ForeignKey)
-    {
+        }
+
+        @if (ct != Choices.ConstraintTypes.ForeignKey)
+        {
         for (int i = 0; i < DataStore.activeTable.columns.Count; i++)
         {
             int i2 = i;
@@ -41,83 +51,87 @@ else
                 <div class="formElement"><InputCheckbox @bind-Value="arrayColumn[i2]" /></div>
             </div>
         }
-    }
-    else
-    {
-        if (DataStore.activeDatabase.tables.Count < 2)
-        {
-            <div class="err">At least two tables are required for FOREIGN KEY constraint.</div>
         }
         else
         {
-            <table>
-                <thead>
+            if (DataStore.activeDatabase.tables.Count < 2)
+            {
+                <div class="err">At least two tables are required for FOREIGN KEY constraint.</div>
+            }
+            else
+            {
+                <table style="margin-top: 1em; margin-left: 0.5em;">
+                    <thead>
                     <td>@(DataStore.activeTable.name)</td>
                     <td>
-                    <select @bind="table">
-                            @foreach (string s in Choices.GetTableNames())
-                            {
-                                if (s != DataStore.activeTable.name)
+                        <select @bind="table">
+                                @foreach (string s in Choices.GetTableNames())
                                 {
                                     if (s != DataStore.activeTable.name)
                                     {
-                                    <option>@s</option>
+                                        if (s != DataStore.activeTable.name)
+                                        {
+                                        <option>@s</option>
+                                        }
                                     }
                                 }
-                            }
 
-                    </select>
+                        </select>
                     </td>
-                </thead>
-                <tbody>
-                    @{
-                        remoteTable = DataStore.activeDatabase.GetTableByName(table);
-                        if (arrayRemoteColumn == null || (arrayRemoteColumn.Length != remoteTable.columns.Count))
+                    </thead>
+                    <tbody>
+                        @{
+                            remoteTable = DataStore.activeDatabase.GetTableByName(table);
+                            if (arrayRemoteColumn == null || (arrayRemoteColumn.Length != remoteTable.columns.Count))
+                            {
+                                arrayRemoteColumn = new bool[remoteTable.columns.Count];
+                            }
+                            max = (DataStore.activeTable.columns.Count > remoteTable.columns.Count) ? DataStore.activeTable.columns.Count : remoteTable.columns.Count;
+                        }
+                        @for (int i = 0; i < max; i++)
                         {
-                            arrayRemoteColumn = new bool[remoteTable.columns.Count];
-                        }         
-                        max = (DataStore.activeTable.columns.Count > remoteTable.columns.Count) ? DataStore.activeTable.columns.Count : remoteTable.columns.Count;
-                    }
-                    @for(int i = 0; i < max; i++)
-                    {
-                        int counter = i;
-                        <tr>
-                            <td>
-                                @if (i < DataStore.activeTable.columns.Count)
-                                {
-                                    <div class="formElementWrapper">
-                                        <div class="formLabel">@(DataStore.activeTable.columns[counter].name)</div>
-                                        <div class="formElement"><InputCheckbox @bind-Value="arrayColumn[counter]" /></div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @("")
-                                }
-                            </td>
-                            <td>
-                                @if (i < remoteTable.columns.Count)
-                                {
-                                    <div class="formElementWrapper">
-                                        <div class="formLabel">@(remoteTable.columns[counter].name)</div>
-                                        <div class="formElement"><InputCheckbox @bind-Value="arrayRemoteColumn[counter]" /></div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    @("")
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                            int counter = i;
+                            <tr>
+                                <td>
+                                    @if (i < DataStore.activeTable.columns.Count)
+                                    {
+                                        <div class="formElementWrapper">
+                                            <div class="formLabel">@(DataStore.activeTable.columns[counter].name)</div>
+                                            <div class="formElement"><InputCheckbox @bind-Value="arrayColumn[counter]" /></div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @("")
+                                    }
+                                </td>
+                                <td>
+                                    @if (i < remoteTable.columns.Count)
+                                    {
+                                        <div class="formElementWrapper">
+                                            <div class="formLabel">@(remoteTable.columns[counter].name)</div>
+                                            <div class="formElement"><InputCheckbox @bind-Value="arrayRemoteColumn[counter]" /></div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @("")
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            }
 
         }
+        <button @onclick="CreateConstraint" class="acceptButton">Create constraint</button>
+
+    </div>
 
     }
 
-    <button @onclick="CreateConstraint" class="acceptButton">Create constraint</button>
 }
 
 @code {
@@ -164,7 +178,12 @@ else
     protected override async Task OnInitializedAsync()
     {
         arrayColumn = new bool[DataStore.activeTable.columns.Count];
-        if (DataStore.activeDatabase.tables[0] != DataStore.activeTable)
+        Console.WriteLine(DataStore.activeDatabase.tables[0] != DataStore.activeTable);
+        if (DataStore.activeDatabase.tables.Count == 1)
+        {
+            table = "";
+        }
+        else if (DataStore.activeDatabase.tables[0] != DataStore.activeTable)
         {
             table = Choices.GetTableNames()[0];
         }

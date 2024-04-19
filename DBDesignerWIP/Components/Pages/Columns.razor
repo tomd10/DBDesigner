@@ -15,13 +15,17 @@ else if (DataStore.activeDatabase.tables.Count == 0)
 else
 {
     <h1>Columns</h1>
-    <button @onclick="navColumns" class="upperButton">Create column</button>
-    <select @bind="table">
+    <select @bind="table" class="upperSelect">
         @foreach (string s in Choices.GetTableNames())
         {
             <option>@s</option>
         }
     </select>
+    <div class="upperButtonContainer">
+        <button @onclick="navColumns" class="upperButton">Create column</button>
+    </div>
+
+
     <table>
         <thead>
             <tr>
@@ -39,7 +43,7 @@ else
                 <td>Collate</td>
                 <td>Edit</td>
                 <td>Drop</td>
-                <td>Drop PK</td>
+                <td>Drop AI</td>
                 <td>Comment</td>
             </tr>
         </thead>
@@ -75,9 +79,9 @@ else
                         }
                         else @("")
                     </td>
-                    <td>@c.nullAllowed</td>
+                    <td>@(c.nullAllowed ? "Y" : "N")</td>
                     <td>
-                        @(c.defaultValueSupported.ToString())
+                        @(c.defaultValueSupported ? "Y" : "N")
                     </td>
                     <td>
                         @if (c.defaultValue == null)
@@ -104,21 +108,21 @@ else
                     <td>
                         @if(c is IntegerColumn)
                         {
-                            @((c as IntegerColumn).zerofill)
+                            @((c as IntegerColumn).zerofill ? "Y" : "N")
                         }
                         else @("")
                     </td>
                     <td>
                         @if (c is IntegerColumn)
                         {
-                            @((c as IntegerColumn).unsigned)
+                            @((c as IntegerColumn).unsigned ? "Y" : "N")
                         }
                         else @("")
                     </td>
                     <td>
                         @if (c is IntegerColumn)
                         {
-                            @((c as IntegerColumn).autoincrement)
+                            @((c as IntegerColumn).autoincrement ? "Y" : "N")
                         }
                         else @("")
                     </td>
@@ -138,9 +142,9 @@ else
                             @("")
 
                     </td>
-                    <td @onclick="@(() => Edit(counter2))">Edit</td>
-                    <td @onclick="@(() => Drop(counter2))">Drop</td>
-                    <td @onclick="@(() => DropAI(counter2))">
+                    <td @onclick="@(() => Edit(counter2))" class="edit">Edit</td>
+                    <td @onclick="@(() => Drop(counter2))" class="drop">Drop</td>
+                    <td @onclick="@(() => DropAI(counter2))" class="dropai">
                         @if (c is IntegerColumn && (c as IntegerColumn).autoincrement)
                         {
                             @("Drop")
@@ -154,7 +158,10 @@ else
     </table>
 
     <h1>Constraints</h1>
-    <button @onclick="navConstraints" class="upperButton">Create constraint</button>
+    <div class="upperButtonContainer">
+        <button @onclick="navConstraints" class="upperButton">Create constraint</button>
+    </div>
+
     <table>
         <thead>
             <td>Name</td>
@@ -177,13 +184,13 @@ else
                 {
                     ConstraintPK con = c as ConstraintPK;
                     <tr>
-                    <td>@("PRIMARY KEY")</td>
                     <td>@("")</td>
+                    <td>@("PRIMARY KEY")</td>
                     <td>@(con.GetLocalColumns())</td>
                     <td></td>
                     <td></td>
-                    <td @onclick="@(() => EditConstraint(counter4))">Edit</td>
-                    <td @onclick="@(() => DropConstraint(counter4))">Drop</td>
+                    <td @onclick="@(() => EditConstraint(counter4))" class="edit">Edit</td>
+                    <td @onclick="@(() => DropConstraint(counter4))" class="drop">Drop</td>
                     </tr>
                 }
 
@@ -196,8 +203,8 @@ else
                 <td>@(con.GetLocalColumns())</td>
                 <td></td>
                 <td></td>
-                <td @onclick="@(() => EditConstraint(counter4))">Edit</td>
-                <td @onclick="@(() => DropConstraint(counter4))">Drop</td>
+                <td @onclick="@(() => EditConstraint(counter4))" class="edit">Edit</td>
+                <td @onclick="@(() => DropConstraint(counter4))" class="drop">Drop</td>
                 </tr>
                 }
 
@@ -210,8 +217,8 @@ else
                 <td>@(con.GetLocalColumns())</td>
                 <td></td>
                 <td></td>
-                <td @onclick="@(() => EditConstraint(counter4))">Edit</td>
-                <td @onclick="@(() => DropConstraint(counter4))">Drop</td>
+                <td @onclick="@(() => EditConstraint(counter4))" class="edit">Edit</td>
+                <td @onclick="@(() => DropConstraint(counter4))" class="drop">Drop</td>
                 </tr>
                 }
 
@@ -224,8 +231,8 @@ else
                 <td>@(con.GetLocalColumns())</td>
                 <td>@(con.GetRemoteTable())</td>
                 <td>@(con.GetRemoteColumns())</td>
-                <td @onclick="@(() => EditConstraint(counter4))">Edit</td>
-                <td @onclick="@(() => DropConstraint(counter4))">Drop</td>
+                <td @onclick="@(() => EditConstraint(counter4))" class="edit">Edit</td>
+                <td @onclick="@(() => DropConstraint(counter4))" class="drop">Drop</td>
                 </tr>
                 }
 

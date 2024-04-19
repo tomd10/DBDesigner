@@ -18,18 +18,18 @@ else if (col == null)
 }
 else
 {
-    <InputRadioGroup @bind-Value="ct" id="typeDropdown">
+    <div class="formWrapper">
+    <InputRadioGroup @bind-Value="ct">
         @foreach (var type in Enum.GetValues<Choices.ColumnTypes>())
         {
-            <div class="radioButton">
-                <label>
-                    <InputRadio Value="type"></InputRadio>
-                    @type
-                </label>
+            <div class="formElementWrapper">
+                    <div class="formLabel">@type</div>
+                    <div class="formElement"><InputRadio Value="type"></InputRadio></div>
             </div>
         }
     </InputRadioGroup>
-
+    </div>
+    <div class="formWrapper">
     <div class="formElementWrapper">
         <div class="formLabel">@("Name: ")</div>
         <div class="formElement"><InputText @bind-Value="name" /></div>
@@ -167,14 +167,8 @@ else
     {
 
     }
-
-
-
-
-
-
     <button @onclick="CreateTable">Create</button>
-
+    </div>
 }
 
 
@@ -306,6 +300,7 @@ else
         int index = -1;
         int.TryParse(columnIndex, out index);
         if (index < 0) return;
+        else if (DataStore.activeDatabase == null) return;
         else
         {
             if (index < DataStore.activeTable.columns.Count)
@@ -337,7 +332,7 @@ else
                 unsigned = ic.unsigned;
                 autoIncrement = ic.autoincrement;
                 hideAuto = !autoIncrement;
-                
+
             }
             else if (col is DecimalColumn)
             {

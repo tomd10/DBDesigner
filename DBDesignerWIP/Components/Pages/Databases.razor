@@ -4,6 +4,7 @@
 @inject NavigationManager nav
 <link rel="stylesheet" href="styles.css" />
 <h1>Databases</h1>
+<div class="upperButtonContainer">
 @{
     if (DataStore.dbConnection != null && !DataStore.databasesLoaded)
     {
@@ -11,8 +12,9 @@
         DataStore.databasesLoaded = true;
     }
 }
-<button @onclick="@(()=>nav.NavigateTo("/createdb"))" class="upperButton">Create database</button>
-List of databases:
+
+    <button @onclick="@(()=>nav.NavigateTo("/createdb"))" class="upperButton">Create database</button>
+</div>
 <table>
     <thead>
         <tr>
@@ -35,9 +37,9 @@ List of databases:
                 <td>@db.name</td>
                 <td>@db.charset</td>
                 <td>@db.collate</td>
-                <td @onclick="@(() => Edit(counter2))">Edit</td>
-                <td @onclick="@(() => Drop(counter2))">Drop</td>
-                <td @onclick="@(() => Active(counter2))">
+                <td @onclick="@(() => Edit(counter2))" class="edit">Edit</td>
+                <td @onclick="@(() => Drop(counter2))" class="drop">Drop</td>
+                <td @onclick="@(() => Active(counter2))" class="activate">
                     @if (DataStore.activeDatabase != db)
                     {
                         @("Activate")
@@ -65,7 +67,6 @@ List of databases:
     {
         string message;
         Methods.DropDatabase(row, out message);
-        JS.InvokeVoidAsync("alert", "Database " + message + " dropped successfully.");
     }
 
     public void Active(int row)

@@ -10,6 +10,7 @@
 }
 else
 {
+    <div class="formWrapper">
     <div class="formElementWrapper">
         <div class="formLabel">@("Name: ")</div>
         <div class="formElement"><InputText @bind-Value="name" /></div>
@@ -70,6 +71,7 @@ else
 
 
     <button @onclick="CreateTable" class="acceptButton">Create</button>
+    </div>
 }
 
 

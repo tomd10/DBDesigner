@@ -14,18 +14,18 @@ else if (DataStore.activeTable == null)
 else
 {
     <h1>Create new column</h1>
-    <InputRadioGroup @bind-Value="ct" id="typeDropdown">
+    <div class="formWrapper">
+    <InputRadioGroup @bind-Value="ct">
         @foreach (var type in Enum.GetValues<Choices.ColumnTypes>())
         {
-            <div class="radioButton">
-                <label>
-                    <InputRadio Value="type"></InputRadio>
-                    @type
-                </label>
+            <div class="formElementWrapper">
+                    <div class="formLabel">@type</div>
+                    <div class="formElement"><InputRadio Value="type"></InputRadio></div>
             </div>
         }
     </InputRadioGroup>
-
+    </div>
+    <div class="formWrapper">
     <div class="formElementWrapper">
         <div class="formLabel">@("Name: ")</div>
         <div class="formElement"><InputText @bind-Value="name" /></div>
@@ -152,7 +152,7 @@ else
 
 
     <button @onclick="CreateTable" class="acceptButton">Create</button>
-
+    </div>
 }
 
 

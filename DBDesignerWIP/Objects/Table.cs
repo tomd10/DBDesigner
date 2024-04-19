@@ -1,8 +1,4 @@
-﻿
-
-using DBDesignerWIP.Components.Pages;
-
-namespace DBDesignerWIP
+﻿namespace DBDesignerWIP
 {
     public class Table
     {
@@ -202,12 +198,12 @@ namespace DBDesignerWIP
 
         public string GetAlterStatement()
         {
-            return "ALTER TABLE `" + this.parent.name + "`.`" + name + "` ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT=" + comment + ";";
+            return "ALTER TABLE `" + this.parent.name + "`.`" + name + "` ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT='" + comment + "';";
         }
 
         public string GetAlterName(string newName)
         {
-            return "ALTER TABLE `" + this.parent.name + "`.`" + name + " RENAME '" + newName + "';"; 
+            return "ALTER TABLE `" + this.parent.name + "`.`" + name + "` RENAME '" + newName + "';"; 
         }
     }
 }
