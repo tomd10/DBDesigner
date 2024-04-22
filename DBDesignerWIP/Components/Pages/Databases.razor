@@ -6,10 +6,10 @@
 <h1>Databases</h1>
 <div class="upperButtonContainer">
 @{
-    if (DataStore.dbConnection != null && !DataStore.databasesLoaded)
+    if (ctx.dbConnection != null && !ctx.databasesLoaded)
     {
         <button @onclick="LoadConnect" class="upperButton">Load databases from connection</button> <br>
-        DataStore.databasesLoaded = true;
+        ctx.databasesLoaded = true;
     }
 }
 
@@ -30,7 +30,7 @@
         @{
             counter = 0;
         }
-        @foreach (Database db in DataStore.databases)
+        @foreach (Database db in ctx.databases)
         {
             int counter2 = counter;
             <tr>
@@ -40,7 +40,7 @@
                 <td @onclick="@(() => Edit(counter2))" class="edit">Edit</td>
                 <td @onclick="@(() => Drop(counter2))" class="drop">Drop</td>
                 <td @onclick="@(() => Active(counter2))" class="activate">
-                    @if (DataStore.activeDatabase != db)
+                    @if (ctx.activeDatabase != db)
                     {
                         @("Activate")
                     }
@@ -54,7 +54,7 @@
     int counter = 0;
     public void LoadConnect()
     {
-        Methods.LoadDatabases();
+        Methods.LoadDatabases(ctx);
         StateHasChanged();
     }
 
@@ -66,12 +66,12 @@
     public void Drop(int row)
     {
         string message;
-        Methods.DropDatabase(row, out message);
+        Methods.DropDatabase(row, out message, ctx);
     }
 
     public void Active(int row)
     {
-        DataStore.activeDatabase = Methods.GetNthDatabase(row);
+        ctx.activeDatabase = Methods.GetNthDatabase(row, ctx);
         StateHasChanged();
     }
 

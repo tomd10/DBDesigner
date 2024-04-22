@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="/styles.css" />
 <h1>Database connection</h1>
 <h2>Current database</h2>
-@if (DataStore.dbConnection == null)
+@if (ctx.dbConnection == null)
 {
     <div class="info">@("None")</div>
     <div class="formWrapper">
@@ -33,7 +33,7 @@
 }
 else
 {
-    <div class="info">@(DataStore.dbConnection.identifier)</div>
+    <div class="info">@(ctx.dbConnection.identifier)</div>
     <button @onclick="Logout" class="acceptButton">Logout</button>
 }
 
@@ -51,13 +51,13 @@ else
         {
             JS.InvokeVoidAsync("alert", "Database connection failed.");
         }
-        else DataStore.dbConnection = db;
+        else ctx.dbConnection = db;
     }
 
     public void Logout()
     {
-        DataStore.databasesLoaded = false;
-        DataStore.dbConnection.Close();
-        DataStore.dbConnection = null;
+        ctx.databasesLoaded = false;
+        ctx.dbConnection.Close();
+        ctx.dbConnection = null;
     }
 }

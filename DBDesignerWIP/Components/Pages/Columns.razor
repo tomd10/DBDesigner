@@ -5,11 +5,11 @@
 @inject NavigationManager nav
 <link rel="stylesheet" href="styles.css" />
 <h1>Columns & Constraints</h1>
-@if(DataStore.activeDatabase == null)
+@if(ctx.activeDatabase == null)
 {
     <div class="err">@("No database selected!")</div>
 }
-else if (DataStore.activeDatabase.tables.Count == 0)
+else if (ctx.activeDatabase.tables.Count == 0)
 {
     <div class="err">@("Empty database!")</div>
 }
@@ -17,7 +17,7 @@ else
 {
     
     <select @bind="table" class="upperSelect">
-        @foreach (string s in Choices.GetTableNames())
+        @foreach (string s in Choices.GetTableNames(ctx))
         {
             <option>@s</option>
         }
@@ -52,7 +52,7 @@ else
             @{
                 counter = 0;
             }
-            @foreach (Column c in DataStore.activeDatabase.GetTableByName(table).columns)
+            @foreach (Column c in ctx.activeDatabase.GetTableByName(table).columns)
             {
                 int counter2 = counter;
                 <tr>
@@ -176,7 +176,7 @@ else
             @{
                 counter3 = 0;
             }
-            @foreach (Constraint c in DataStore.activeDatabase.GetTableByName(table).constraints)
+            @foreach (Constraint c in ctx.activeDatabase.GetTableByName(table).constraints)
             {
                 int counter4 = counter3;
 
@@ -247,15 +247,15 @@ else
 @code {
     [Parameter]
     public string tableIndex { get; set; }
-    public string table { get; set; } = (DataStore.activeDatabase != null && DataStore.activeDatabase.tables.Count > 0) ? Choices.GetTableNames()[0] : "";
+    public string table { get; set; }
     int counter = 0;
     int counter3 = 0; 
 
     public void Edit(int row)
     {
         string errorMessage;
-        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
-        if (!Methods.AlterColumn(row, out errorMessage))
+        ctx.activeTable = ctx.activeDatabase.GetTableByName(table);
+        if (!Methods.AlterColumn(row, out errorMessage, ctx))
         {
             JS.InvokeVoidAsync("alert", errorMessage);
         }
@@ -268,8 +268,8 @@ else
     public void Drop(int row)
     {
         string errorMessage;
-        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
-        if (!Methods.DropColumn(row, out errorMessage))
+        ctx.activeTable = ctx.activeDatabase.GetTableByName(table);
+        if (!Methods.DropColumn(row, out errorMessage, ctx))
         {
             JS.InvokeVoidAsync("alert", errorMessage);
         }
@@ -281,8 +281,8 @@ else
 
     public void DropAI(int row)
     {
-        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
-        Methods.DropAutoIncrement(row);
+        ctx.activeTable = ctx.activeDatabase.GetTableByName(table);
+        Methods.DropAutoIncrement(row, ctx);
     }
 
     public void EditConstraint(int row)
@@ -293,8 +293,8 @@ else
     public void DropConstraint(int row)
     {
         string errorMessage;
-        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
-        if (!Methods.DropConstraint(row, out errorMessage))
+        ctx.activeTable = ctx.activeDatabase.GetTableByName(table);
+        if (!Methods.DropConstraint(row, out errorMessage, ctx))
         {
             JS.InvokeVoidAsync("alert", errorMessage);
         }
@@ -306,13 +306,13 @@ else
 
     public void navColumns()
     {
-        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        ctx.activeTable = ctx.activeDatabase.GetTableByName(table);
         nav.NavigateTo("/createcolumn");
     }
 
     public void navConstraints()
     {
-        DataStore.activeTable = DataStore.activeDatabase.GetTableByName(table);
+        ctx.activeTable = ctx.activeDatabase.GetTableByName(table);
         nav.NavigateTo("/createconstraint");
     }
 
@@ -320,11 +320,13 @@ else
     {
         int index = -1;
         int.TryParse(tableIndex, out index);
-        if (DataStore.activeDatabase != null && DataStore.activeDatabase.tables.Count > 0 &&
-            index > 0 && index < DataStore.activeDatabase.tables.Count)
+        if (ctx.activeDatabase != null && ctx.activeDatabase.tables.Count > 0 &&
+            index > 0 && index < ctx.activeDatabase.tables.Count)
         {
-            table = DataStore.activeDatabase.tables[index].name;
+            table = ctx.activeDatabase.tables[index].name;
         }
+
+        table = ctx.ShowColumn();
 
         StateHasChanged();
 

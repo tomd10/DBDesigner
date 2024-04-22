@@ -63,7 +63,7 @@ else
         if (index < 0) return;
         else
         {
-            db = Methods.GetNthDatabase(index);
+            db = Methods.GetNthDatabase(index, ctx);
             loaded = true;
 
             name = db.name;
@@ -79,8 +79,8 @@ else
         string statement1 = db.GetAlterCharset(charset);
         string statement2 = db.GetAlterCollate(charset+collate);
 
-        if (statement1 != null) DataStore.batch.Add(statement1);
-        if (statement2 != null) DataStore.batch.Add(statement2);
+        if (statement1 != null) ctx.batch.Add(statement1);
+        if (statement2 != null) ctx.batch.Add(statement2);
         nav.NavigateTo("/databases");
     }
 }

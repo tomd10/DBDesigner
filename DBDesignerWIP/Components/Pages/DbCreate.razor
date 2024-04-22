@@ -48,7 +48,7 @@
     public void CreateDatabase()
     {
         string errorMessage = "";
-        if (Methods.CreateDatabase(name, charset, collate, out errorMessage))
+        if (Methods.CreateDatabase(name, charset, collate, out errorMessage, ctx))
         {
             //JS.InvokeVoidAsync("alert", "Database " + name + " created successfully.");
 

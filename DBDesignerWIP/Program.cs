@@ -1,10 +1,12 @@
+using DBDesignerWIP;
 using DBDesignerWIP.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .Services.AddScoped<DbService>();
 
 var app = builder.Build();
 

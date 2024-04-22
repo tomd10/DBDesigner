@@ -21,19 +21,19 @@
         public static List<string> dbNames = new List<string>();
         public static List<string> tableNames = new List<string>();
 
-        public static void SetDbNames()
+        public static void SetDbNames(DbService ctx)
         {
             dbNames = new List<string>();
-            foreach (Database database in DataStore.databases)
+            foreach (Database database in ctx.databases)
             {
                 dbNames.Add(database.name);
             }
         }
 
-        public static void SetTableNames()
+        public static void SetTableNames(DbService ctx)
         {
             tableNames = new List<string>();
-            foreach (Table t in DataStore.activeDatabase.tables)
+            foreach (Table t in ctx.activeDatabase.tables)
             {
                 tableNames.Add(t.name);
             }
@@ -54,12 +54,12 @@
             else return datetimeColumn;
         }
 
-        public static List<string> GetTableNames()
+        public static List<string> GetTableNames(DbService ctx)
         {
             List<string> names = new List<string>();
-            if (DataStore.activeDatabase != null)
+            if (ctx.activeDatabase != null)
             {
-                foreach (Table t in DataStore.activeDatabase.tables)
+                foreach (Table t in ctx.activeDatabase.tables)
                 {
                     names.Add(t.name);
                 }
