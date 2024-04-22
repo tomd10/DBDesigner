@@ -6,6 +6,7 @@
 <h1>Alter database</h1>
 @if(loaded && db != null)
 {
+    <div class="formWrapper">
     <div class="formElementWrapper">
         <div class="formLabel">    @("Name:")</div>
         <div class="formElement">
@@ -13,8 +14,6 @@
         </div>
     </div>
 
-        
-    <br />
     <div class="formElementWrapper">
         <div class="formLabel">@("Charset:")</div>
         <div class="formElement">
@@ -39,6 +38,7 @@
         </div>
     </div>
     <button @onclick="AlterDatabase" class="acceptButton">Alter database</button>
+    </div>
 }
 else
 {
@@ -65,7 +65,7 @@ else
         {
             db = Methods.GetNthDatabase(index, ctx);
             loaded = true;
-
+            if (db == null) return;
             name = db.name;
             charset = db.charset;
             collate = db.collate.Substring(db.charset.Length, db.collate.Length - db.charset.Length);

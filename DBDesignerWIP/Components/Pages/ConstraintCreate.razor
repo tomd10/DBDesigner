@@ -62,9 +62,9 @@ else
             {
                 <table style="margin-top: 1em; margin-left: 0.5em;">
                     <thead>
-                    <td>@(ctx.activeTable.name)</td>
+                    <td style="background-color: #ccffcc;">@(ctx.activeTable.name)</td>
                     <td>
-                        <select @bind="table">
+                        <select @bind="table" class="upperSelect" style="width: 100%;">
                                 @foreach (string s in Choices.GetTableNames(ctx))
                                 {
                                     if (s != ctx.activeTable.name)
@@ -146,7 +146,7 @@ else
 
     public string table { get; set; } /*= (ctx.activeDatabase != null && ctx.activeDatabase.tables.Count > 0) ? Choices.GetTableNames()[0] : "";*/
 
-    public Column localColumn { get; set; } //= ctx.activeTable.columns[0];
+    public Column localColumn { get; set; } 
     public Column remoteColumn { get; set; }
 
     public void CreateConstraint()
@@ -177,6 +177,10 @@ else
     }
     protected override async Task OnInitializedAsync()
     {
+        if (ctx.activeTable == null)
+        {
+            return;
+        }
         arrayColumn = new bool[ctx.activeTable.columns.Count];
         Console.WriteLine(ctx.activeDatabase.tables[0] != ctx.activeTable);
         if (ctx.activeDatabase.tables.Count == 1)
@@ -191,6 +195,8 @@ else
         {
             table = Choices.GetTableNames(ctx)[1];
         }
+
+        localColumn = ctx.GetColumn();
         StateHasChanged();
 
     }

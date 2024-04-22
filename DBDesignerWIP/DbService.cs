@@ -26,6 +26,11 @@
             }
             else return "";
         }
+
+        public Column GetColumn()
+        {
+            return activeTable.columns[0];
+        }
     }
 
 

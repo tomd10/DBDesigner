@@ -147,6 +147,7 @@ else
         if (batch)
         {
             errors = ctx.dbConnection.ExecuteBatch(ctx.batch);
+            ctx.batch = new List<string>();
         }
         else
         {
