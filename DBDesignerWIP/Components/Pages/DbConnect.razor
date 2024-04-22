@@ -56,6 +56,7 @@ else
 
     public void Logout()
     {
+        DataStore.databasesLoaded = false;
         DataStore.dbConnection.Close();
         DataStore.dbConnection = null;
     }

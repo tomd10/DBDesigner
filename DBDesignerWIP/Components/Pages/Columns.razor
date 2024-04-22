@@ -4,6 +4,7 @@
 @inject IJSRuntime JS
 @inject NavigationManager nav
 <link rel="stylesheet" href="styles.css" />
+<h1>Columns & Constraints</h1>
 @if(DataStore.activeDatabase == null)
 {
     <div class="err">@("No database selected!")</div>
@@ -14,7 +15,7 @@ else if (DataStore.activeDatabase.tables.Count == 0)
 }
 else
 {
-    <h1>Columns</h1>
+    
     <select @bind="table" class="upperSelect">
         @foreach (string s in Choices.GetTableNames())
         {
@@ -156,8 +157,7 @@ else
             }
         </tbody>
     </table>
-
-    <h1>Constraints</h1>
+    <br />
     <div class="upperButtonContainer">
         <button @onclick="navConstraints" class="upperButton">Create constraint</button>
     </div>
