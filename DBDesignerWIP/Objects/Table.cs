@@ -82,7 +82,6 @@
             result = result.Substring(0,result.Length - 2);
             result = result + "\n) ";
             result = result + "ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT='" + comment + "' ;";
-            Console.WriteLine("#######" + comment);
             return result;
         }
 
@@ -203,7 +202,7 @@
 
         public string GetAlterName(string newName)
         {
-            return "ALTER TABLE `" + this.parent.name + "`.`" + name + "` RENAME '" + newName + "';"; 
+            return "ALTER TABLE `" + this.parent.name + "`.`" + name + "` RENAME `" + this.parent.name + "`.`" + newName + "` ;"; 
         }
     }
 }

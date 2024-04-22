@@ -73,7 +73,7 @@
                 return new DateTimeColumn(parent, s);
             }
 
-            return null;
+            throw new NotImplementedException("Unsupported column type.");
         }
 
         public List<Constraint> GetColumnReferences()

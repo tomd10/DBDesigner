@@ -6,8 +6,13 @@
         {
             foreach (string database in DataStore.dbConnection.GetDatabases())
             {
+                string err;
                 Database db = new Database(DataStore.dbConnection.GetCreateDatabase(database));
-                DataStore.databases.Add(db);
+                if (db.name != "information_schema" && db.name != "mysql" && db.name != "performance_schema" && db.name != "sys" && db.name != "sakila" && Check.IsValidName(db.name, out err))
+                {
+                    DataStore.databases.Add(db);
+                }
+                else continue;
 
                 List<string> tables = DataStore.dbConnection.GetTables(database);
                 foreach (string table in tables)
@@ -566,14 +571,90 @@
                 list.Add(db.GetStatement());
             }
 
+            
             foreach (Database db in DataStore.databases)
             {
                 if (db.name == "sys" || db.name == "information_schema" || db.name == "performance_schema" || db.name == "mysql") continue;
-                foreach (Table table in db.tables)
+                List<Table> processedTables = new List<Table>();
+
+                int processed = 0;
+
+                foreach (Table t in db.tables)
                 {
-                    
-                    list.Add(table.GetStatement());
+                    Console.WriteLine("---" + t.name);
                 }
+
+                //#1 Tables unreferenced by FOREIGN KEY
+                for(int i = 0; i<db.tables.Count; i++)
+                {
+                    bool match = false;
+
+                    foreach (Constraint c in db.tables[i].constraints)
+                    {
+                        if (c is ConstraintFK)
+                        {
+                            ConstraintFK fk = (ConstraintFK)c;
+                            if (fk.parent != db.tables[i]) continue;
+                            if (!processedTables.Contains(fk.remoteTable))
+                            {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!match)
+                    {
+                        list.Add(db.tables[i].GetStatement());
+                        processedTables.Add(db.tables[i]);
+                        processed++;
+                        Console.Write(db.tables[i].name + " ");
+                    }
+                }
+
+                Console.WriteLine();
+                //#2 Tables referenced by 
+                while (processed < db.tables.Count)
+                {
+                    for (int i = 0; i < db.tables.Count; i++)
+                    {
+                        if (processedTables.Contains(db.tables[i])) { continue; }
+                        List<ConstraintFK> listFK = db.GetTableFKReference(db.tables[i]);
+
+                        Console.WriteLine("processing" + db.tables[i].name +" start");
+                        bool match = false;
+                        foreach (Constraint c in db.tables[i].constraints)
+                        {
+                            if (c is ConstraintFK)
+                            {
+                                ConstraintFK fk = (ConstraintFK)c;
+                                if (fk.parent != db.tables[i]) continue;
+                                if (!processedTables.Contains(fk.remoteTable))
+                                {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                        }
+                        /*
+                        {
+                            Console.WriteLine(constraintFK.remoteTable.name);
+                            if (!processedTables.Contains(constraintFK.remoteTable))
+                            {
+                                match = true;
+                            }
+                        }
+                        Console.WriteLine("end");
+                        */
+                        if (match == false)
+                        {
+                            processedTables.Add(db.tables[i]);
+                            processed++;
+                            list.Add(db.tables[i].GetStatement());
+                        }
+                    }
+                }
+                
             }
 
             DataStore.batchDeNovo = list;
