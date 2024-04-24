@@ -81,7 +81,7 @@
             }
             result = result.Substring(0,result.Length - 2);
             result = result + "\n) ";
-            result = result + "ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + " DEFAULT CHARSET=" + charset + " COLLATE=" + collate + " COMMENT='" + comment + "' ;";
+            result = result + "ENGINE=" + engine + " AUTO_INCREMENT=" + auto_increment + ((charset != "") ? " DEFAULT CHARSET=" + charset : "") + ((collate != "") ? " COLLATE=" + collate : "") + " COMMENT='" + comment + "' ;";
             return result;
         }
 

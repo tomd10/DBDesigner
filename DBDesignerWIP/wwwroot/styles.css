@@ -123,11 +123,19 @@ thead tr
     width: 50%;
 }
 
-.formWrapper
-{
-    max-width: 70%;
-    border: 3px solid black;
-    margin-bottom: 1em;
+@media (min-width: 800px) {
+    .formWrapper {
+        max-width: 70%;
+        border: 3px solid black;
+        margin-bottom: 1em;
+    }
+}
+@media (max-width: 800px) {
+    .formWrapper {
+        width: 100%;
+        border: 3px solid black;
+        margin-bottom: 1em;
+    }
 }
 
 .formElement input
