@@ -171,6 +171,7 @@
             col.name = "TEMP " + col.name;
             if (!Check.CheckTextColumn(name, type, nullAllowed, defaultValue, comment, size, charset, collate, out errorMessage, ctx))
             {
+                col.name = col.name.Substring(5, col.name.Length - 5);
                 return false;
             }
             else
@@ -190,6 +191,7 @@
         {
             if(!Check.CheckIntegerColumn(name, type, nullAllowed, defaultValue, comment, size, unsigned, zerofill, autoIncrement, out errorMessage, ctx))
             {
+
                 return false;
             }
             else
@@ -227,6 +229,7 @@
             if (col is IntegerColumn) { (col as IntegerColumn).autoincrement = false; }
             if (!Check.CheckIntegerColumn(name, type, nullAllowed, defaultValue, comment, size, unsigned, zerofill, autoIncrement, out errorMessage, ctx))
             {
+                col.name = col.name.Substring(5, col.name.Length - 5);
                 return false;
             }
             else
@@ -266,6 +269,7 @@
             col.name = "TEMP " + col.name;
             if (!Check.CheckDecimalColumn(name, type, nullAllowed, defaultValue, comment, size, d, out errorMessage, ctx))
             {
+                col.name = col.name.Substring(5, col.name.Length - 5);
                 return false;
             }
             else
@@ -305,6 +309,7 @@
             col.name = "TEMP " + col.name;
             if (!Check.CheckEnumColumn(name, type, nullAllowed, defaultValue, comment, options, out errorMessage, ctx))
             {
+                col.name = col.name.Substring(5, col.name.Length - 5);
                 return false;
             }
             else
@@ -345,6 +350,7 @@
             col.name = "TEMP " + col.name;
             if (!Check.CheckBinaryColumn(name, type, nullAllowed, defaultValue, comment, size, out errorMessage, ctx))
             {
+                col.name = col.name.Substring(5, col.name.Length - 5);
                 return false;
             }
             else
@@ -384,6 +390,7 @@
             col.name = "TEMP " + col.name;
             if (!Check.CheckDateTimeColumn(name, type, nullAllowed, defaultValue, comment, out errorMessage, ctx))
             {
+                col.name = col.name.Substring(5, col.name.Length - 5);
                 return false;
             }
             else
