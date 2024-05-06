@@ -8,13 +8,14 @@ namespace DBDesignerWIP
         private MySqlCommand cmd;
         public string identifier;
 
-        public SqlDb(string hostname, string username, string password, string database)
+        public SqlDb(string hostname, string username, string password, string database, uint port)
         {
             MySqlConnectionStringBuilder sb = new MySqlConnectionStringBuilder();
             sb.Server = hostname;
             sb.UserID = username;
             sb.Password = password;
             sb.Database = database;
+            sb.Port = port;
 
             identifier = username + "@" + hostname;
 
@@ -23,11 +24,11 @@ namespace DBDesignerWIP
             cmd = conn.CreateCommand();
         }
 
-        public static SqlDb CreateConnection(string hostname, string username, string password)
+        public static SqlDb CreateConnection(string hostname, string username, string password, uint port)
         {      
             try
             {
-                SqlDb ret = new SqlDb(hostname, username, password, "");
+                SqlDb ret = new SqlDb(hostname, username, password, "", port);
                 return ret;
             }
             catch
